@@ -59,13 +59,12 @@ def gnomad_overlaps(sv):
     intersect = sv.intersect(gnomadbed, wao = True, f = minf, r = True)
     for interval in intersect:
         chrom1,start1,end1 = interval[0],interval[1],interval[2]
-        svtype1,svtype2 = interval[3],interval[8]
-        gnomad_filter = interval[10]
+        svtype1,svtype2 = interval[3],interval[7]
         sv = str(chrom1) + ':' + str(start1) + ':' +  str(end1) + ':' + svtype1
-        if svtype1 == svtype2 and gnomad_filter == 'PASS':
-            af = '%.6f' % float(interval[34])
+        if svtype1 == svtype2:
+            af = '%.6f' % float(interval[8])
             gnomad_AFs[sv].append(af)
-            popaf = '%.6f' % float(interval[42])
+            popaf = '%.6f' % float(interval[9])
             gnomad_popAFs[sv].append(popaf)
 
 tmp = []
