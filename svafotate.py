@@ -6,7 +6,7 @@ from pybedtools import BedTool
 from argparse import ArgumentParser
 
 parser = ArgumentParser()
-parser.add_argument('-v',
+parser.add_argument('-i',
                     metavar='STRING',
                     help='path to VCF to annotate')
 parser.add_argument('-f', 
@@ -15,13 +15,19 @@ parser.add_argument('-f',
 parser.add_argument('-o',
                     metavar='STRING',
                     help='output VCF name/path')
+parser.add_argument('-ccdg',
+                    metavar='STRING',
+                    help='path to CCDG SV bed file')
+parser.add_argument('-gnomad',
+                    metavar='STRING',
+                    help='path to gnomAD SV bed file')
 
 args = parser.parse_args()
 
-if args.v is None:
-    raise NameError('Must include path to VCF with option -v')
+if args.i is None:
+    raise NameError('Must include path to VCF with option -i')
 else:
-    vcf = cyvcf2.VCF(args.v)
+    vcf = cyvcf2.VCF(args.i)
 if args.f is None:
     minf = float(0.1)
 else:
@@ -30,11 +36,14 @@ if args.o is None:
     raise NameError('Must include name/path to output VCF with option -o')
 else:
     output_vcf = args.o
-
-ccdg = gzip.open('/uufs/chpc.utah.edu/common/HIPAA/u0055382/genome_ref/ccdg_v37_sv.sites.bed.gz', 'r')
-ccdgbed = BedTool(ccdg)
-gnomad = gzip.open('/uufs/chpc.utah.edu/common/HIPAA/u0055382/genome_ref/gnomad_v2_sv.sites.bed.gz', 'r')
-gnomadbed = BedTool(gnomad)
+if args.ccdg is not None:
+    ccdg = gzip.open(args.ccdg, 'r')
+    ccdgbed = BedTool(ccdg)
+if args.gnomad is not None:
+    gnomad = gzip.open(args.gnomad, 'r')
+    gnomadbed = BedTool(gnomad)
+if args.ccdg is None and args.gnomad is None:
+    raise NameError('Please include something to annotate with -ccdg or -gnomad')
 
 def ccdg_overlaps(sv):
     intersect = sv.intersect(ccdgbed, wao = True, f = minf, r = True)
@@ -83,16 +92,17 @@ for v in vcf:
     out = [str(chrom), str(start), str(end), svtype]
     tmp.append(out)
 
-vcf.close(); vcf = cyvcf2.VCF(args.v)
+vcf.close(); vcf = cyvcf2.VCF(args.i)
 tmpbed = BedTool(tmp)
-ccdg_overlaps(tmpbed)
-gnomad_overlaps(tmpbed)
-
-vcf.add_info_to_header({'ID': 'CCDG_maxAF', 'Description': 'The maximum AF from matching SV overlaps with CCDG', 'Type': 'Float', 'Number': '1'})
-vcf.add_info_to_header({'ID': 'CCDG_count', 'Description': 'The number of matching SV overlaps with CCDG', 'Type': 'Integer', 'Number': '1'})
-vcf.add_info_to_header({'ID': 'gnomAD_maxAF', 'Description': 'The maximum AF from matching SV overlaps with gnomAD', 'Type': 'Float', 'Number': '1'})
-vcf.add_info_to_header({'ID': 'gnomAD_popmaxAF', 'Description': 'The maximum PopMax AF from matching SV overlaps with gnomAD', 'Type': 'Float', 'Number': '1'})
-vcf.add_info_to_header({'ID': 'gnomAD_count', 'Description': 'The number of matching SV overlaps with gnomAD', 'Type': 'Integer', 'Number': '1'})
+if args.ccdg is not None:
+    ccdg_overlaps(tmpbed)
+    vcf.add_info_to_header({'ID': 'CCDG_MaxAF', 'Description': 'The maximum AF from matching SV overlaps with CCDG', 'Type': 'Float', 'Number': '1'})
+    vcf.add_info_to_header({'ID': 'CCDG_Count', 'Description': 'The number of matching SV overlaps with CCDG', 'Type': 'Integer', 'Number': '1'})
+if args.gnomad is not None:
+    gnomad_overlaps(tmpbed)
+    vcf.add_info_to_header({'ID': 'gnomAD_MaxAF', 'Description': 'The maximum AF from matching SV overlaps with gnomAD', 'Type': 'Float', 'Number': '1'})
+    vcf.add_info_to_header({'ID': 'gnomAD_PopMaxAF', 'Description': 'The maximum PopMax AF from matching SV overlaps with gnomAD', 'Type': 'Float', 'Number': '1'})
+    vcf.add_info_to_header({'ID': 'gnomAD_Count', 'Description': 'The number of matching SV overlaps with gnomAD', 'Type': 'Integer', 'Number': '1'})
 
 new_vcf = Writer(output_vcf, vcf)
 for v in vcf:
@@ -106,32 +116,21 @@ for v in vcf:
     if svtype == 'BND':
         end = int(v.POS)
     sv = str(chrom) + ':' + str(start) + ':' + str(end) + ':' +svtype
-    ccdg_maxAF = 0
-    if len(ccdg_AFs[sv]) > 0:
-        ccdg_maxAF = max(ccdg_AFs[sv])
-    gnomad_maxAF = 0
-    gnomad_popmaxAF = 0
-    if len(gnomad_AFs[sv]) > 0:
-        gnomad_maxAF = max(gnomad_AFs[sv])
-        gnomad_popmaxAF = max(gnomad_popAFs[sv])
-    v.INFO['CCDG_maxAF'] = ccdg_maxAF
-    v.INFO['CCDG_count'] = len(ccdg_AFs[sv])
-    v.INFO['gnomAD_maxAF'] = gnomad_maxAF
-    v.INFO['gnomAD_popmaxAF'] = gnomad_popmaxAF
-    v.INFO['gnomAD_count'] = len(gnomad_AFs[sv])
+    if args.ccdg is not None:
+        ccdg_maxAF = 0
+        if len(ccdg_AFs[sv]) > 0:
+            ccdg_maxAF = max(ccdg_AFs[sv])
+        v.INFO['CCDG_MaxAF'] = ccdg_maxAF
+        v.INFO['CCDG_Count'] = len(ccdg_AFs[sv])
+    if args.gnomad is not None:
+        gnomad_maxAF = 0
+        gnomad_popmaxAF = 0
+        if len(gnomad_AFs[sv]) > 0:
+            gnomad_maxAF = max(gnomad_AFs[sv])
+            gnomad_popmaxAF = max(gnomad_popAFs[sv])
+        v.INFO['gnomAD_MaxAF'] = gnomad_maxAF
+        v.INFO['gnomAD_PopMaxAF'] = gnomad_popmaxAF
+        v.INFO['gnomAD_Count'] = len(gnomad_AFs[sv])
     new_vcf.write_record(v)
 
 new_vcf.close(); vcf.close()
-
-#for interval in tmpbed:
-#    chrom,start,end,svtype = interval
-#    sv = str(chrom) + ':' + str(start) + ':' + str(end) + ':' +svtype
-#    ccdg_maxAF = 0
-#    if len(ccdg_AFs[sv]) > 0:
-#        ccdg_maxAF = max(ccdg_AFs[sv])
-#    gnomad_maxAF = 0
-#    gnomad_popmaxAF = 0
-#    if len(gnomad_AFs[sv]) > 0:
-#        gnomad_maxAF = max(gnomad_AFs[sv])
-#        gnomad_popmaxAF = max(gnomad_popAFs[sv])
-#    print chrom,start,end,svtype,ccdg_maxAF,len(ccdg_AFs[sv]),gnomad_maxAF,gnomad_popmaxAF,len(gnomad_AFs[sv])
