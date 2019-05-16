@@ -9,12 +9,12 @@ parser = ArgumentParser()
 parser.add_argument('-i',
                     metavar='STRING',
                     help='path to VCF to annotate')
-parser.add_argument('-f', 
-                    metavar='FLOAT', 
-                    help='minimum overlap required between SVs (default 0.1)')
 parser.add_argument('-o',
                     metavar='STRING',
                     help='output VCF name/path')
+parser.add_argument('-f', 
+                    metavar='FLOAT', 
+                    help='minimum reciprocal overlap required between SVs (default 0.1)')
 parser.add_argument('-ccdg',
                     metavar='STRING',
                     help='path to CCDG SV bed file')
