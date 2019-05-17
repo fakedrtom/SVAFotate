@@ -78,6 +78,6 @@ This was downloaded and then summarized with the following command:
 zcat gnomad_v2_sv.sites.bed.gz | awk '$7=="PASS"' | cut -f 1-3,5,31,39 | bgzip -c > gnomad_sv_afs.bed.gz
 ```
 
-The resulting BED contains CHROM, START, END, SVTYPE, AF, and PopMaxAF and is 
+The resulting BED contains CHROM, START, END, SVTYPE, AF, and POPMAX_AF and is 
 included in this repo. Please note that only SVs with a "PASS" FILTER were 
 included here. 
