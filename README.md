@@ -3,12 +3,13 @@ SVAFotate
 
 Overview
 =========================
-Annotate a (lumpy) SV VCF with various AFs from CCDG and/or gnomAD with a 
-simple command line tool. This will add to the INFO field new categories
-corresponding to the maximum AF frequency found for SVs from CCDG and/or gnomAD
-that overlap a given SV in your VCF. It will also include a field for the 
-number (count) of overlaps between a given SV in your VCF and those found 
-in the CCDG and/or gnomAD SV datasets.
+Annotate a (lumpy) SV VCF with allele frequencies (AFs) from large 
+population SV cohorts (currently CCDG and/or gnomAD) with a simple 
+command line tool. This will add to the INFO field new categories 
+corresponding to the maximum AF frequency found for SVs from these 
+SV datasets that overlap a given SV in your VCF. It will also include 
+a field for the number (count) of overlaps between a given SV in your 
+VCF and those found in the CCDG and/or gnomAD SV datasets.
 
 Installation
 ========================
@@ -38,9 +39,9 @@ optional arguments:
   -gnomad STRING  path to gnomAD SV bed file
 ```
 
-Since the idea is to annotate a VCF with AF information from CCDG and/or gnomAD, 
-you must include a path to at least one of these. If only one is included,
-only those annotations will be added.
+Since the idea is to annotate a VCF with AF information from CCDG and/or 
+gnomAD, you must include a path to at least one of these. If only one is 
+included, only those annotations will be added.
 
 ```
 python svafotate.py -i your.vcf -o your.annotated.vcf -ccdg ccdg_sv_afs.bed.gz -gnomad gnomad_sv_afs.bed.gz
@@ -51,11 +52,11 @@ between query SVs in the provided VCF and SVs in the SV datasets that they are
 being compared to. Any value between 0 and 1 may be entered (default value of 
 0.1 if `-f` is not used). SVs with overlaps will have AFs from the datasets 
 added to the INFO fields. Query SVs without overlaps will be given AF annotations 
-of 0. The higher the value of `-f`, the more exact the SV overlap match must be.
+of 0. The higher the value of `-f`, the more precise the SV overlap match must be.
  
 SV Datasets
 ==========================
-Currently this repo includes SV datasets from CCDG and gnomAD that contain allele frequencies 
+Currently this repo includes SV datasets from CCDG and gnomAD that contain AFs 
 from large population cohorts. Each of these datasets have been summarized and made
 available download here.
 
