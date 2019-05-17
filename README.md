@@ -3,11 +3,11 @@ SVAFotate
 
 Overview
 =========================
-Annotate a (lumpy) SV VCF with allele frequencies (AFs) from large 
-population SV cohorts (currently CCDG and/or gnomAD) with a simple 
-command line tool. This will add to the INFO field new categories 
-corresponding to the maximum AF frequency found for SVs from these 
-SV datasets that overlap a given SV in your VCF. It will also include 
+Annotate a (lumpy) structual vairant (SV) VCF with allele frequencies 
+(AFs) from large population SV cohorts (currently CCDG and/or gnomAD) 
+with a simple command line tool. This will add to the INFO field new 
+categories corresponding to the maximum AF frequency found for SVs from 
+these SV datasets that overlap a given SV in your VCF. It will also include 
 a field for the number (count) of overlaps between a given SV in your 
 VCF and those found in the CCDG and/or gnomAD SV datasets.
 
