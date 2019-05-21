@@ -95,13 +95,13 @@ vcf.close(); vcf = cyvcf2.VCF(args.i)
 tmpbed = BedTool(tmp)
 if args.ccdg is not None:
     ccdg_overlaps(tmpbed)
-    vcf.add_info_to_header({'ID': 'CCDG_MaxAF', 'Description': 'The maximum AF from matching SV overlaps with CCDG', 'Type': 'Float', 'Number': '1'})
-    vcf.add_info_to_header({'ID': 'CCDG_Count', 'Description': 'The number of matching SV overlaps with CCDG', 'Type': 'Integer', 'Number': '1'})
+    vcf.add_info_to_header({'ID': 'CCDG_MaxAF', 'Description': 'The maximum AF from matching SVs with ' + str(minf) + ' overlaps with CCDG', 'Type': 'Float', 'Number': '1'})
+    vcf.add_info_to_header({'ID': 'CCDG_Count', 'Description': 'The number of matching SVs with ' + str(minf) + ' overlaps with CCDG', 'Type': 'Integer', 'Number': '1'})
 if args.gnomad is not None:
     gnomad_overlaps(tmpbed)
-    vcf.add_info_to_header({'ID': 'gnomAD_MaxAF', 'Description': 'The maximum AF from matching SV overlaps with gnomAD', 'Type': 'Float', 'Number': '1'})
-    vcf.add_info_to_header({'ID': 'gnomAD_PopMaxAF', 'Description': 'The maximum PopMax AF from matching SV overlaps with gnomAD', 'Type': 'Float', 'Number': '1'})
-    vcf.add_info_to_header({'ID': 'gnomAD_Count', 'Description': 'The number of matching SV overlaps with gnomAD', 'Type': 'Integer', 'Number': '1'})
+    vcf.add_info_to_header({'ID': 'gnomAD_MaxAF', 'Description': 'The maximum AF from matching SVs with ' + str(minf) + ' overlaps with gnomAD', 'Type': 'Float', 'Number': '1'})
+    vcf.add_info_to_header({'ID': 'gnomAD_PopMaxAF', 'Description': 'The maximum PopMax AF from matching SVs with ' + str(minf) + ' overlaps with gnomAD', 'Type': 'Float', 'Number': '1'})
+    vcf.add_info_to_header({'ID': 'gnomAD_Count', 'Description': 'The number of matching SVs with ' + str(minf) + ' overlaps with gnomAD', 'Type': 'Integer', 'Number': '1'})
 
 new_vcf = Writer(output_vcf, vcf)
 for v in vcf:
