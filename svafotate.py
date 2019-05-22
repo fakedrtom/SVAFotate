@@ -53,32 +53,48 @@ if args.gnomad is not None:
 if args.ccdg is None and args.gnomad is None:
     raise NameError('Please include something to annotate with -ccdg or -gnomad')
 
-def ccdg_overlaps(sv):
-    intersect = sv.intersect(ccdgbed, wao = True, f = minf, r = True)
-    for interval in intersect:
-        chrom1,start1,end1 = interval[0],interval[1],interval[2]
-        svtype1,svtype2 = interval[3],interval[7]
-        sv = str(chrom1) + ':' + str(start1) + ':' +  str(end1) + ':' + svtype1
-        if svtype1 == svtype2:
-            af = '%.6f' % float(interval[8])
-            ccdg_AFs[sv].append(af)
+#def ccdg_overlaps(sv):
+#    intersect = sv.intersect(ccdgbed, wao = True, f = minf, r = True)
+#    for interval in intersect:
+#        chrom1,start1,end1 = interval[0],interval[1],interval[2]
+#        svtype1,svtype2 = interval[3],interval[7]
+#        sv = str(chrom1) + ':' + str(start1) + ':' +  str(end1) + ':' + svtype1
+#        if svtype1 == svtype2:
+#            af = '%.6f' % float(interval[8])
+#            ccdg_AFs[sv].append(af)
 
-def gnomad_overlaps(sv):
-    intersect = sv.intersect(gnomadbed, wao = True, f = minf, r = True)
+#def gnomad_overlaps(sv):
+#    intersect = sv.intersect(gnomadbed, wao = True, f = minf, r = True)
+#    for interval in intersect:
+#        chrom1,start1,end1 = interval[0],interval[1],interval[2]
+#        svtype1,svtype2 = interval[3],interval[7]
+#        sv = str(chrom1) + ':' + str(start1) + ':' +  str(end1) + ':' + svtype1
+#        if svtype1 == svtype2:
+#            af = '%.6f' % float(interval[8])
+#            gnomad_AFs[sv].append(af)
+#            popaf = '%.6f' % float(interval[9])
+#            gnomad_popAFs[sv].append(popaf)
+
+def overlaps(bed,data_dict,columns):
+    if len(columns) == 1:
+        intersect = bed.intersect(ccdgbed, wao = True, f = minf, r = True)
+    elif len(columns) == 2:
+        intersect = bed.intersect(gnomadbed, wao = True, f = minf, r = True)
     for interval in intersect:
         chrom1,start1,end1 = interval[0],interval[1],interval[2]
         svtype1,svtype2 = interval[3],interval[7]
         sv = str(chrom1) + ':' + str(start1) + ':' +  str(end1) + ':' + svtype1
+        afs = []
         if svtype1 == svtype2:
-            af = '%.6f' % float(interval[8])
-            gnomad_AFs[sv].append(af)
-            popaf = '%.6f' % float(interval[9])
-            gnomad_popAFs[sv].append(popaf)
+            for i in columns:
+                af = '%.6f' % float(interval[i])
+                afs.append(af)
+            data_dict[sv].append(afs)
 
 tmp = []
 ccdg_AFs = {}
 gnomad_AFs = {}
-gnomad_popAFs = {}
+#gnomad_popAFs = {}
 for v in vcf:
     chrom = v.CHROM
     if chrom.startswith('chr'):
@@ -94,19 +110,21 @@ for v in vcf:
         ccdg_AFs[sv] = []
     if sv not in gnomad_AFs:
         gnomad_AFs[sv] = []
-    if sv not in gnomad_popAFs:
-        gnomad_popAFs[sv] = []
+#    if sv not in gnomad_popAFs:
+#        gnomad_popAFs[sv] = []
     out = [str(chrom), str(start), str(end), svtype]
     tmp.append(out)
 
 vcf.close(); vcf = cyvcf2.VCF(args.i)
 tmpbed = BedTool(tmp)
 if args.ccdg is not None:
-    ccdg_overlaps(tmpbed)
+#    ccdg_overlaps(tmpbed)
+    overlaps(tmpbed,ccdg_AFs,[8])
     vcf.add_info_to_header({'ID': 'CCDG_MaxAF', 'Description': 'The maximum AF from matching SVs with ' + str(minf) + ' overlaps with CCDG', 'Type': 'Float', 'Number': '1'})
     vcf.add_info_to_header({'ID': 'CCDG_Count', 'Description': 'The number of matching SVs with ' + str(minf) + ' overlaps with CCDG', 'Type': 'Integer', 'Number': '1'})
 if args.gnomad is not None:
-    gnomad_overlaps(tmpbed)
+#    gnomad_overlaps(tmpbed)
+    overlaps(tmpbed,gnomad_AFs,[8,9])
     vcf.add_info_to_header({'ID': 'gnomAD_MaxAF', 'Description': 'The maximum AF from matching SVs with ' + str(minf) + ' overlaps with gnomAD', 'Type': 'Float', 'Number': '1'})
     vcf.add_info_to_header({'ID': 'gnomAD_PopMaxAF', 'Description': 'The maximum PopMax AF from matching SVs with ' + str(minf) + ' overlaps with gnomAD', 'Type': 'Float', 'Number': '1'})
     vcf.add_info_to_header({'ID': 'gnomAD_Count', 'Description': 'The number of matching SVs with ' + str(minf) + ' overlaps with gnomAD', 'Type': 'Integer', 'Number': '1'})
@@ -126,15 +144,23 @@ for v in vcf:
     if args.ccdg is not None:
         ccdg_maxAF = 0
         if len(ccdg_AFs[sv]) > 0:
-            ccdg_maxAF = max(ccdg_AFs[sv])
+            afs = []
+            for i in ccdg_AFs[sv]:
+                afs.append(i[0])
+            ccdg_maxAF = max(afs)
         v.INFO['CCDG_MaxAF'] = ccdg_maxAF
         v.INFO['CCDG_Count'] = len(ccdg_AFs[sv])
     if args.gnomad is not None:
         gnomad_maxAF = 0
         gnomad_popmaxAF = 0
         if len(gnomad_AFs[sv]) > 0:
-            gnomad_maxAF = max(gnomad_AFs[sv])
-            gnomad_popmaxAF = max(gnomad_popAFs[sv])
+            afs = []
+            pop_afs = []
+            for i in gnomad_AFs[sv]:
+                afs.append(i[0])
+                pop_afs.append(i[1])
+            gnomad_maxAF = max(afs)
+            gnomad_popmaxAF = max(pop_afs)
         v.INFO['gnomAD_MaxAF'] = gnomad_maxAF
         v.INFO['gnomAD_PopMaxAF'] = gnomad_popmaxAF
         v.INFO['gnomAD_Count'] = len(gnomad_AFs[sv])
