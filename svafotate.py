@@ -6,20 +6,26 @@ from pybedtools import BedTool
 from argparse import ArgumentParser
 
 parser = ArgumentParser()
-parser.add_argument('-i',
-                    metavar='STRING',
+parser.add_argument('-i', '--in',
+                    metavar='INPUT VCF',
+                    dest="i",
                     help='path to VCF to annotate')
-parser.add_argument('-o',
-                    metavar='STRING',
+parser.add_argument('-o', '--out',
+                    metavar='OUTPUT VCF',
+                    dest="o",
                     help='output VCF name/path')
-parser.add_argument('-f', 
-                    metavar='FLOAT', 
-                    help='minimum reciprocal overlap required between SVs (default 0.1)')
-parser.add_argument('-ccdg',
-                    metavar='STRING',
+parser.add_argument('-f', '--minf',
+                    metavar='MINIMUM OVERLAP',
+                    dest="f",
+                    type=float,
+                    help='minimum reciprocal overlap required between SVs (default 0.1, must be between 0 and 1.0)')
+parser.add_argument('-ccdg', '--ccdg',
+                    metavar='PATH TO CCDG',
+                    dest="ccdg",
                     help='path to CCDG SV bed file')
-parser.add_argument('-gnomad',
-                    metavar='STRING',
+parser.add_argument('-gnomad', '--gnomad',
+                    metavar='PATH TO GNOMAD',
+                    dest="gnomad",
                     help='path to gnomAD SV bed file')
 
 args = parser.parse_args()
@@ -32,6 +38,8 @@ if args.f is None:
     minf = float(0.1)
 else:
     minf = float(args.f)
+if minf > 1 or minf < 0:
+    raise NameError('minimum reciprocal overlap must be between 0 and 1.0')
 if args.o is None:
     raise NameError('Must include name/path to output VCF with option -o')
 else:
