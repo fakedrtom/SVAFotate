@@ -18,7 +18,7 @@ parser.add_argument('-f', '--minf',
                     metavar='MINIMUM OVERLAP',
                     dest="f",
                     type=float,
-                    help='minimum reciprocal overlap required between SVs (default 0.1, must be between 0 and 1.0)')
+                    help='minimum reciprocal overlap required between SVs (default 0.01, must be between 0 and 1.0)')
 parser.add_argument('-ccdg', '--ccdg',
                     metavar='PATH TO CCDG',
                     dest="ccdg",
@@ -35,7 +35,7 @@ if args.i is None:
 else:
     vcf = cyvcf2.VCF(args.i)
 if args.f is None:
-    minf = float(0.1)
+    minf = float(0.01)
 else:
     minf = float(args.f)
 if minf > 1 or minf < 0:
