@@ -3,7 +3,7 @@ SVAFotate
 
 Overview
 =========================
-Annotate a (lumpy) structual vairant (SV) VCF with allele frequencies 
+Annotate a (lumpy) structual variant (SV) VCF with allele frequencies 
 (AFs) from large population SV cohorts (currently CCDG and/or gnomAD) 
 with a simple command line tool. This will add to the INFO field new 
 categories corresponding to the maximum AF frequency found for SVs from 
@@ -72,8 +72,8 @@ available for download.
 Detailed information about the CCDG dataset can be found [here](https://www.biorxiv.org/content/10.1101/508515v1).
 While the authors have made a hg38 and hg19 VCF of their dataset available,
 the hg38 reflects more samples and hence a larger SV dataset. This was selected,
-converted to a BED format and was converted to hg19 using UCSC's [liftOver](https://genome.ucsc.edu/cgi-bin/hgLiftOver) 
-tool. With the results an hg19 VCF was generated and then converted to a BED including
+converted to a BED format and was then converted to hg19 using UCSC's [liftOver](https://genome.ucsc.edu/cgi-bin/hgLiftOver) 
+tool. With those results an hg19 VCF was generated and then converted to a BED including
 CHROM, START, END, SVTYPE, and AF. That bed is included as part of this repo 
 and is named `ccdg_sv_afs.bed.gz`.
 
