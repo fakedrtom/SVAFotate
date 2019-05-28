@@ -27,11 +27,10 @@ parser.add_argument('-gnomad', '--gnomad',
                     metavar='PATH TO GNOMAD',
                     dest="gnomad",
                     help='path to gnomAD SV bed file')
-parser.add_argument('-ci', '--ci',
-#                    metavar='USE CI OPTION',
-                    dest="ci",
-                    action='store_true',
-                    help='option to use out confidence intervals (CIPOS95, CIEND95) for SV boundaries')
+#parser.add_argument('-ci', '--ci',
+#                    dest="ci",
+#                    action='store_true',
+#                    help='option to use out confidence intervals (CIPOS95, CIEND95) for SV boundaries')
 
 args = parser.parse_args()
 
@@ -58,28 +57,6 @@ if args.gnomad is not None:
 if args.ccdg is None and args.gnomad is None:
     raise NameError('Please include something to annotate with -ccdg or -gnomad')
 
-#def ccdg_overlaps(sv):
-#    intersect = sv.intersect(ccdgbed, wao = True, f = minf, r = True)
-#    for interval in intersect:
-#        chrom1,start1,end1 = interval[0],interval[1],interval[2]
-#        svtype1,svtype2 = interval[3],interval[7]
-#        sv = str(chrom1) + ':' + str(start1) + ':' +  str(end1) + ':' + svtype1
-#        if svtype1 == svtype2:
-#            af = '%.6f' % float(interval[8])
-#            ccdg_AFs[sv].append(af)
-
-#def gnomad_overlaps(sv):
-#    intersect = sv.intersect(gnomadbed, wao = True, f = minf, r = True)
-#    for interval in intersect:
-#        chrom1,start1,end1 = interval[0],interval[1],interval[2]
-#        svtype1,svtype2 = interval[3],interval[7]
-#        sv = str(chrom1) + ':' + str(start1) + ':' +  str(end1) + ':' + svtype1
-#        if svtype1 == svtype2:
-#            af = '%.6f' % float(interval[8])
-#            gnomad_AFs[sv].append(af)
-#            popaf = '%.6f' % float(interval[9])
-#            gnomad_popAFs[sv].append(popaf)
-
 def overlaps(bed,data_dict,columns):
     if data_dict == ccdg_AFs:
         intersect = bed.intersect(ccdgbed, wao = True, f = minf, r = True)
@@ -99,45 +76,36 @@ def overlaps(bed,data_dict,columns):
 tmp = []
 ccdg_AFs = {}
 gnomad_AFs = {}
-#gnomad_popAFs = {}
 for v in vcf:
     chrom = v.CHROM
     if chrom.startswith('chr'):
         chrom = chrom[3:]
     start = int(v.POS)-1
     end = v.INFO.get('END')
-#    print start,end
     if v.INFO.get('SVTYPE') is not None:
         svtype=v.INFO.get('SVTYPE')
     if svtype == 'BND':
         end = int(v.POS)
-    if args.ci:
-        cipos = v.INFO.get('CIPOS95')
-        ciend = v.INFO.get('CIEND95')
-#        print cipos,ciend
-        start = start + int(cipos[0])
-        end = end + int(ciend[1])
-#        print start,end
+#    if args.ci:
+#        cipos = v.INFO.get('CIPOS95')
+#        ciend = v.INFO.get('CIEND95')
+#        start = start + int(cipos[0])
+#        end = end + int(ciend[1])
     sv = str(chrom) + ':' + str(start) + ':' + str(end) + ':' +svtype
-#    print sv
     if sv not in ccdg_AFs:
         ccdg_AFs[sv] = []
     if sv not in gnomad_AFs:
         gnomad_AFs[sv] = []
-#    if sv not in gnomad_popAFs:
-#        gnomad_popAFs[sv] = []
     out = [str(chrom), str(start), str(end), svtype]
     tmp.append(out)
 
 vcf.close(); vcf = cyvcf2.VCF(args.i)
 tmpbed = BedTool(tmp)
 if args.ccdg is not None:
-#    ccdg_overlaps(tmpbed)
     overlaps(tmpbed,ccdg_AFs,[8])
     vcf.add_info_to_header({'ID': 'CCDG_MaxAF', 'Description': 'The maximum AF from matching SVs with ' + str(minf) + ' overlaps with CCDG', 'Type': 'Float', 'Number': '1'})
     vcf.add_info_to_header({'ID': 'CCDG_Count', 'Description': 'The number of matching SVs with ' + str(minf) + ' overlaps with CCDG', 'Type': 'Integer', 'Number': '1'})
 if args.gnomad is not None:
-#    gnomad_overlaps(tmpbed)
     overlaps(tmpbed,gnomad_AFs,[8,9])
     vcf.add_info_to_header({'ID': 'gnomAD_MaxAF', 'Description': 'The maximum AF from matching SVs with ' + str(minf) + ' overlaps with gnomAD', 'Type': 'Float', 'Number': '1'})
     vcf.add_info_to_header({'ID': 'gnomAD_PopMaxAF', 'Description': 'The maximum PopMax AF from matching SVs with ' + str(minf) + ' overlaps with gnomAD', 'Type': 'Float', 'Number': '1'})
@@ -154,11 +122,11 @@ for v in vcf:
         svtype=v.INFO.get('SVTYPE')
     if svtype == 'BND':
         end = int(v.POS)
-    if args.ci:
-        cipos = v.INFO.get('CIPOS95')
-        ciend = v.INFO.get('CIEND95')
-        start = start + int(cipos[0])
-        end = end + int(ciend[1])
+#    if args.ci:
+#        cipos = v.INFO.get('CIPOS95')
+#        ciend = v.INFO.get('CIEND95')
+#        start = start + int(cipos[0])
+#        end = end + int(ciend[1])
     sv = str(chrom) + ':' + str(start) + ':' + str(end) + ':' +svtype
     if args.ccdg is not None:
         ccdg_maxAF = 0
