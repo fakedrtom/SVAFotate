@@ -27,6 +27,11 @@ parser.add_argument('-gnomad', '--gnomad',
                     metavar='PATH TO GNOMAD',
                     dest="gnomad",
                     help='path to gnomAD SV bed file')
+parser.add_argument('-ci', '--ci',
+#                    metavar='USE CI OPTION',
+                    dest="ci",
+                    action='store_true',
+                    help='option to use out confidence intervals (CIPOS95, CIEND95) for SV boundaries')
 
 args = parser.parse_args()
 
@@ -101,11 +106,20 @@ for v in vcf:
         chrom = chrom[3:]
     start = int(v.POS)-1
     end = v.INFO.get('END')
+#    print start,end
     if v.INFO.get('SVTYPE') is not None:
         svtype=v.INFO.get('SVTYPE')
     if svtype == 'BND':
         end = int(v.POS)
+    if args.ci:
+        cipos = v.INFO.get('CIPOS95')
+        ciend = v.INFO.get('CIEND95')
+#        print cipos,ciend
+        start = start + int(cipos[0])
+        end = end + int(ciend[1])
+#        print start,end
     sv = str(chrom) + ':' + str(start) + ':' + str(end) + ':' +svtype
+#    print sv
     if sv not in ccdg_AFs:
         ccdg_AFs[sv] = []
     if sv not in gnomad_AFs:
@@ -140,6 +154,11 @@ for v in vcf:
         svtype=v.INFO.get('SVTYPE')
     if svtype == 'BND':
         end = int(v.POS)
+    if args.ci:
+        cipos = v.INFO.get('CIPOS95')
+        ciend = v.INFO.get('CIEND95')
+        start = start + int(cipos[0])
+        end = end + int(ciend[1])
     sv = str(chrom) + ':' + str(start) + ':' + str(end) + ':' +svtype
     if args.ccdg is not None:
         ccdg_maxAF = 0
