@@ -76,9 +76,9 @@ if args.ccdg is None and args.gnomad is None:
 #            gnomad_popAFs[sv].append(popaf)
 
 def overlaps(bed,data_dict,columns):
-    if len(columns) == 1:
+    if data_dict == ccdg_AFs:
         intersect = bed.intersect(ccdgbed, wao = True, f = minf, r = True)
-    elif len(columns) == 2:
+    elif data_dict == gnomad_AFs:
         intersect = bed.intersect(gnomadbed, wao = True, f = minf, r = True)
     for interval in intersect:
         chrom1,start1,end1 = interval[0],interval[1],interval[2]
