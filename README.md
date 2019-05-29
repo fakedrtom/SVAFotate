@@ -28,6 +28,7 @@ Usage
 ```
 usage: svafotate.py [-h] [-i INPUT VCF] [-o OUTPUT VCF] [-f MINIMUM OVERLAP]
                     [-ccdg PATH TO CCDG] [-gnomad PATH TO GNOMAD]
+                    [-ci USE CI BOUNDARIES]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -42,6 +43,10 @@ optional arguments:
                         path to CCDG SV bed file
   -gnomad PATH TO GNOMAD, --gnomad PATH TO GNOMAD
                         path to gnomAD SV bed file
+  -ci USE CI BOUNDARIES, --ci USE CI BOUNDARIES
+                        option to use out inner or outer confidence intervals
+                        (CIPOS95, CIEND95) for SV boundaries, must answer "in"
+                        or "out"
 ```
 
 Since the idea is to annotate a VCF with AF information from CCDG and/or 
@@ -60,7 +65,17 @@ added to the INFO fields. Query SVs without overlaps will be given AF annotation
 of 0. The higher the value of `-f`, the more precise the SV overlap match must be. 
 For more information on how the overlaps are measured and determined please 
 refer to [this](https://bedtools.readthedocs.io/en/latest/content/tools/intersect.html).
- 
+
+Lumpy SVs provide confidence intervals for the location of the SV breakpoints. The 
+optional `-ci` parameter allows these breakpoints to be adjusted using the 95% confidence 
+intervals (CIPOS95 and CIEND95). Indicating `in` with the `-ci` option will reduce the 
+size of the SV by increasing the start with the right value from CIPOS95 and 
+decreasing the end with the left value of CIEND95. The `out` answer will increase 
+the size of the SV by subtracting the left value from CIPOS95 from the start and 
+adding the right value from CIEND95 to the end. These new boundaries will then be 
+used to ascertain overlaps with the indicated SV datasets, but the resulting output 
+VCF will maintain the original boundaries in the POS column and END INFO field.
+
 SV Datasets
 ==========================
 Currently this repo includes SV datasets from CCDG and gnomAD that contain AFs 
