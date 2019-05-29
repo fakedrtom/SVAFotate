@@ -27,10 +27,11 @@ parser.add_argument('-gnomad', '--gnomad',
                     metavar='PATH TO GNOMAD',
                     dest="gnomad",
                     help='path to gnomAD SV bed file')
-#parser.add_argument('-ci', '--ci',
-#                    dest="ci",
-#                    action='store_true',
-#                    help='option to use out confidence intervals (CIPOS95, CIEND95) for SV boundaries')
+parser.add_argument('-ci', '--ci',
+                    metavar='USE CI BOUNDARIES',
+                    dest="ci",
+                    choices=['in','out'],
+                    help='option to use out inner or outer confidence intervals (CIPOS95, CIEND95) for SV boundaries, must answer "in" or "out"')
 
 args = parser.parse_args()
 
@@ -86,11 +87,18 @@ for v in vcf:
         svtype=v.INFO.get('SVTYPE')
     if svtype == 'BND':
         end = int(v.POS)
-#    if args.ci:
-#        cipos = v.INFO.get('CIPOS95')
-#        ciend = v.INFO.get('CIEND95')
-#        start = start + int(cipos[0])
-#        end = end + int(ciend[1])
+    if args.ci == 'out':
+        cipos = v.INFO.get('CIPOS95')
+        ciend = v.INFO.get('CIEND95')
+        start = start + int(cipos[0])
+        end = end + int(ciend[1])
+    if args.ci == 'in':
+        cipos = v.INFO.get('CIPOS95')
+        ciend = v.INFO.get('CIEND95')
+        start = start + int(cipos[1])
+        end = end + int(ciend[0])
+        if end < start:
+            end = start + 1
     sv = str(chrom) + ':' + str(start) + ':' + str(end) + ':' +svtype
     if sv not in ccdg_AFs:
         ccdg_AFs[sv] = []
@@ -122,11 +130,18 @@ for v in vcf:
         svtype=v.INFO.get('SVTYPE')
     if svtype == 'BND':
         end = int(v.POS)
-#    if args.ci:
-#        cipos = v.INFO.get('CIPOS95')
-#        ciend = v.INFO.get('CIEND95')
-#        start = start + int(cipos[0])
-#        end = end + int(ciend[1])
+    if args.ci == 'out':
+        cipos = v.INFO.get('CIPOS95')
+        ciend = v.INFO.get('CIEND95')
+        start = start + int(cipos[0])
+        end = end + int(ciend[1])
+    if args.ci == 'in':
+        cipos = v.INFO.get('CIPOS95')
+        ciend = v.INFO.get('CIEND95')
+        start = start + int(cipos[1])
+        end = end + int(ciend[0])
+        if end < start:
+            end = start + 1
     sv = str(chrom) + ':' + str(start) + ':' + str(end) + ':' +svtype
     if args.ccdg is not None:
         ccdg_maxAF = 0
