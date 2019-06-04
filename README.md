@@ -99,9 +99,10 @@ A BED format of their results is available [here](https://gnomad.broadinstitute.
 This was downloaded and then summarized with the following command:
 
 ```
-zcat gnomad_v2_sv.sites.bed.gz | awk '$7=="PASS"' | cut -f 1-3,5,31,39 | bgzip -c > gnomad_sv_afs.bed.gz
+zcat gnomad_v2_sv.sites.bed.gz | awk '$7=="PASS"' | cut -f 1-3,5,31,39 | awk 'BEGIN { print "#CHROM\tSTART\tEND\tSVTYPE\tAF\tPOPMAX_AF"} {printf "%d\t" "%d\t" "%d\t" "%-3s\t" "%0.6f\t" "%0.6f\n", $1, $2, $3, $4, $5, $6}' | bgzip -c > gnomad_sv_afs.bed.gz
 ```
 
 The resulting BED contains CHROM, START, END, SVTYPE, AF, and POPMAX_AF and is 
 included in this repo, named `gnomad_sv_afs.bed.gz`. Please note that only SVs with a 
-"PASS" FILTER were included here. 
+"PASS" FILTER were included here and the excessive awking was to correct certain END 
+coordinates that were listed using scientific notation. 
