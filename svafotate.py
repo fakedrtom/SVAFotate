@@ -87,6 +87,15 @@ for v in vcf:
         svtype=v.INFO.get('SVTYPE')
     if svtype == 'BND':
         end = int(v.POS)
+    if start > end:
+        print "Bad coordinates:"
+        print str(chrom) + "\t" + str(start) + "\t" + str(end)
+        fix_start = start
+        fix_end = end
+        start = fix_end
+        end = fix_start
+        print "Flipped to:"
+        print str(chrom) + "\t"+ str(start) + "\t" + str(end)
     if args.ci == 'out':
         cipos = v.INFO.get('CIPOS95')
         ciend = v.INFO.get('CIEND95')
@@ -130,6 +139,11 @@ for v in vcf:
         svtype=v.INFO.get('SVTYPE')
     if svtype == 'BND':
         end = int(v.POS)
+    if start > end:
+        fix_start = start
+        fix_end = end
+        start = fix_end
+        end = fix_start
     if args.ci == 'out':
         cipos = v.INFO.get('CIPOS95')
         ciend = v.INFO.get('CIEND95')
