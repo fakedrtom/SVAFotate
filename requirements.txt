@@ -1,0 +1,7 @@
+pandas
+numpy
+pyranges
+htslib
+zlib
+cyvcf2
+python>=3
