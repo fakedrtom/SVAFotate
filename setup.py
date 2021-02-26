@@ -13,7 +13,7 @@ setup(
     long_description=open("README.md").read(),
     author="",
     author_email="",
-    url="https://github.com/mikecormier/SVAFotate",
+    url="https://github.com/fakedrtom/SVAFotate",
     packages=["svafotate"],
     package_data={"": ["LICENSE", "README.md"]},
     package_dir={"svafotate": "svafotate"},
