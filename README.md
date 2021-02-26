@@ -42,7 +42,7 @@ $ conda install --file https://raw.githubusercontent.com/fakedrtom/SVAFotate/mas
 3) Install SVAFotate
 
 ```
-$ pip install -U git@github.com:fakedrtom/SVAFotate.git
+$ pip install git+https://github.com/fakedrtom/SVAFotate.git
 ```
 
 
