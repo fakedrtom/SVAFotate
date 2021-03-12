@@ -795,6 +795,7 @@ def annotate(parser,args):
                            "SVLEN": lists["svlen"], \
                            "SVTYPE": lists["svtype"], \
                            "SV_ID": lists["sv_id"]})
+    pr_vcf = pr.PyRanges(pr_vcf.df, int64=True)
 
     ## pyRanges join
     ## identify intersections of SV coordinates
@@ -812,6 +813,7 @@ def annotate(parser,args):
                            "SVLEN": bed_lists[source]["svlen"], \
                            "SVTYPE": bed_lists[source]["svtype"], \
                            "SV_ID": bed_lists[source]["sv_id"]})
+        pr_bed = pr.PyRanges(pr_bed.df, int64=True)
         joined = pr_vcf.join(pr_bed, how = "left").sort()
 
         pr_matches = joined.subset(lambda df: (df.SVTYPE == df.SVTYPE_b))
@@ -864,6 +866,7 @@ def annotate(parser,args):
                                "Start": tar_lists['start'], \
                                "End": tar_lists['end'], \
                                "Targets": tar_lists['target']})
+        pr_tar = pr.PyRanges(pr_tar.df, int64=True)
         tar_joined = pr_vcf.join(pr_tar).sort()
         tardf = tar_joined.as_df()
         if tardf.empty != True:
@@ -885,7 +888,7 @@ def annotate(parser,args):
                                    "SVLEN": svtype_lists[svtype]['svlen'], \
                                    "SVTYPE": svtype_lists[svtype]['svtype'], \
                                    "SV_ID": svtype_lists[svtype]['sv_id']})
-
+            pr_vcf = pr.PyRanges(pr_vcf.df, int64=True)
             if args.cov:
                 print("\nRunning pyranges.coverage for:")
                 print(str(svtype))
@@ -903,6 +906,7 @@ def annotate(parser,args):
                                        "SVLEN": fin_cov_lists['svlen'], \
                                        "SVTYPE": fin_cov_lists['svtype'], \
                                        "SV_ID": fin_cov_lists['sv_id']})
+                pr_bed = pr.PyRanges(pr_bed.df, int64=True)
 
                 coveraged = pr_vcf.coverage(pr_bed, overlap_col="Overlaps", fraction_col="Coverage").sort()
                 if not coveraged.empty:
@@ -927,6 +931,7 @@ def annotate(parser,args):
                                            "SVLEN": fin_uniq_lists['svlen'], \
                                            "SVTYPE": fin_uniq_lists['svtype'], \
                                            "SV_ID": fin_uniq_lists['sv_id']})
+                pr_bed = pr.PyRanges(pr_bed.df, int64=True)
 
                 subtracted = pr_vcf.subtract(pr_bed).sort()
                 if not subtracted.empty:
@@ -982,6 +987,7 @@ def annotate(parser,args):
                                     "Start": new_uniq_lists['start'], \
                                     "End": new_uniq_lists['end'], \
                                     "SV_ID": new_uniq_lists['sv_id']})
+            pr_uniq = pr.PyRanges(pr_uniq.df, int64=True)
 
             uniq_join = pr_uniq.join(pr_tar).sort()
             uniqdf = uniq_join.as_df()
