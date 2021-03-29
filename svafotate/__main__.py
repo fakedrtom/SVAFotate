@@ -14,7 +14,7 @@ def main(args=None):
     parser = argparse.ArgumentParser(
         prog="svafotate", 
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-        description="""SVAFotate: Structural Variant VCF Annotation tools
+        description="""SVAFotate: Structural Variant Allele Frequency annotator
                        =================================================="""
     )
 
