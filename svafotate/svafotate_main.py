@@ -77,7 +77,7 @@ def add_annotation(parser):
                    metavar="EXTRA ANNOTATIONS",
                    nargs = "*",
                    choices = extra_annotation_choices,
-                   help=("By default, only the Max_AF, Max_Hets and Max_Homalt counts, and Max_PopMax_AF are annotated in the output VCF file."
+                   help=("By default, only the Max_AF, Max_Hets and Max_HomAlt counts, and Max_PopMax_AF are annotated in the output VCF file."
                          " `-a` can be used to add additional annotations, with each anntotation seperated by a space"
                          " (Example ' -a mf best pops ' ). Choices = [{}]").format(", ".join(extra_annotation_choices))
     )
@@ -86,17 +86,17 @@ def add_annotation(parser):
                     metavar='OBSERVED SV COVERAGE',
                     type=float,
                     help=("Add an annotation reflecting how much of the queried SV genomic space has been previously observed with the same SVTYPE."
-                          "Uses the data sources listed with -s as the previously observed SVs."
-                          "Please provide minimum AF to exclude all SVs from data sources with a total AF below that value (must be between 0 and 1.0).")
+                          " Uses the data sources listed with -s as the previously observed SVs."
+                          " Please provide minimum AF to exclude all SVs from data sources with a total AF below that value (must be between 0 and 1.0).")
     )
     
     opt.add_argument('-u', '--uniq',
                     metavar='UNIQUE SV REGIONS',
                     type=float,
                     help=("Generate a file of unique SV regions called 'unique.bed'."
-                          "These regions reflect genomic space within the queried SV region that have not been previously observed with the same SVTYPE."
-                          "This will also add an annotation regarding the number of unique regions within a given SV."
-                          "Please provide minimum AF to exclude all SVs from data sources with a total AF below that value (must be between 0 and 1.0).")
+                          " These regions reflect genomic space within the queried SV region that have not been previously observed with the same SVTYPE."
+                          " This will also add an annotation regarding the number of unique regions within a given SV."
+                          " Please provide minimum AF to exclude all SVs from data sources with a total AF below that value (must be between 0 and 1.0).")
     )
 
     opt.add_argument("-l", "--lim",
@@ -108,22 +108,22 @@ def add_annotation(parser):
     opt.add_argument('-t', '--target',
                     metavar='TARGETS BED FILE',
                      help=("Path to target regions BED file."
-                           "Expected format is a tab delimited file listing CHROM START END ID"
-                           "where ID is a genomic region identifier that will be listed as an annotation if an overlap exists between a given SV and the target regions.")
+                           " Expected format is a tab delimited file listing CHROM START END ID"
+                           " where ID is a genomic region identifier that will be listed as an annotation if an overlap exists between a given SV and the target regions.")
     )
 
     opt.add_argument("-ci", "--ci",
                    metavar="USE CI BOUNDARIES",
                    choices=["in","out"],
                    help=("Expects CIPOS and CIEND to be included in the INFO field of the input VCF (--vcf)."
-                         "If argument is selected, use 'inner' or 'outer' confidence intervals (CIPOS, CIEND) for SV boundaries. Choices = [in, out]") 
+                         " If argument is selected, use 'inner' or 'outer' confidence intervals (CIPOS, CIEND) for SV boundaries. Choices = [in, out]") 
     )
 
     opt.add_argument("-ci95", "--ci95",
                    metavar="USE CI BOUNDARIES",
                    choices=["in","out"],
                    help=("Expects CIPOS95 and CIEND95 to be included in the INFO field of the input VCF (--vcf)."
-                         "If argument is selected, use 'inner' or 'outer' confidence intervals (CIPOS95, CIEND95) for SV boundaries. Choices = [in, out]")
+                         " If argument is selected, use 'inner' or 'outer' confidence intervals (CIPOS95, CIEND95) for SV boundaries. Choices = [in, out]")
     )
 
     opt.add_argument("-e", "--emb",
