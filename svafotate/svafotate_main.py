@@ -115,15 +115,15 @@ def add_annotation(parser):
     opt.add_argument("-ci", "--ci",
                    metavar="USE CI BOUNDARIES",
                    choices=["in","out"],
-                   help=("If argument is selected, use 'inner' or 'outer' confidence intervals (CIPOS, CIEND) for SV boundaries. Choices = [in, out]"
-                         "Expects CIPOS and CIEND to be included in the INFO field of the input VCF (--vcf).") 
+                   help=("Expects CIPOS and CIEND to be included in the INFO field of the input VCF (--vcf)."
+                         "If argument is selected, use 'inner' or 'outer' confidence intervals (CIPOS, CIEND) for SV boundaries. Choices = [in, out]") 
     )
 
     opt.add_argument("-ci95", "--ci95",
                    metavar="USE CI BOUNDARIES",
                    choices=["in","out"],
-                   help=("If argument is selected, use 'inner' or 'outer' confidence intervals (CIPOS95, CIEND95) for SV boundaries. Choices = [in, out]"
-                         "Expects CIPOS95 and CIEND95 to be included in the INFO field of the input VCF (--vcf).")
+                   help=("Expects CIPOS95 and CIEND95 to be included in the INFO field of the input VCF (--vcf)."
+                         "If argument is selected, use 'inner' or 'outer' confidence intervals (CIPOS95, CIEND95) for SV boundaries. Choices = [in, out]")
     )
 
     opt.add_argument("-e", "--emb",
