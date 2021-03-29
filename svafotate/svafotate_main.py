@@ -39,23 +39,23 @@ def add_annotation(parser):
     req.add_argument("-v", "--vcf",
                      metavar="INPUT VCF",
                      required = True,
-                     help="Path and/or name of the VCF file to annotate"
+                     help="Path and/or name of the VCF file to annotate."
     )
 
     req.add_argument("-o", "--out",
                      metavar="OUTPUT VCF",
                      required = True,
-                     help="Path and/or name of the output VCF file"
+                     help="Path and/or name of the output VCF file."
     )
 
     req_one.add_argument("-b", "--bed",
                      metavar="SOURCE BED",
-                     help="Path and/or name of the combined sources AF bed file. (--pickled-source can be used instead of --bed) (NOTE: --bed takes high priority then --pickled-source"
+                     help="Path and/or name of the combined sources AF bed file (--pickled-source can be used instead of --bed) (NOTE: --bed takes higher priority than --pickled-source)."
     )
 
     req_one.add_argument("-p", "--pickled-source",
                          metavar = "Pickled Source Data",
-                         help = "Path and/or name of the pickled source data to use. (--bed can be used instead of --pickled-source) (NOTE: if --bed is provided, --pickled-source is ignored.)"
+                         help = "Path and/or name of the pickled source data to use (--bed can be used instead of --pickled-source) (NOTE: if --bed is provided, --pickled-source is ignored)."
     )
 
     opt.add_argument("-f", "--minf",
@@ -63,22 +63,22 @@ def add_annotation(parser):
                    nargs = "*",
                    help=("A space seperated list of minimum reciprocal overlap fractions required between SVs for each source"
                          " listed with the `-s` option. If `-s` is not used, only the first minf will be used and will be applied"
-                         " to all sources. minf values must be between 0.0 and 1.0. (Default = 0.001)")
+                         " to all sources. minf values must be between 0.0 and 1.0 (Default = 0.001).")
     )
 
     opt.add_argument("-s", "--sources",
                    metavar="SOURCES TO ANNOTATE",
                    nargs = "*",
                    help=("Space seperated list of data sources to use for annotation. If '-s' is not used, all sources available in the"
-                         " source bed file will be used. (Example: ' -s CCDG gnomAD ' )")
+                         " source bed file will be used (Example: ' -s CCDG gnomAD ' ).")
     )
 
     opt.add_argument("-a", "--ann",
                    metavar="EXTRA ANNOTATIONS",
                    nargs = "*",
                    choices = extra_annotation_choices,
-                   help=("By default, only the maxAF, max Hets and Homalt counts, and max PopAF are annotated in the output VCF file."
-                         " `-a` can be used to add additional annotations, with each anntotation seperated by a space."
+                   help=("By default, only the Max_AF, Max_Hets and Max_Homalt counts, and Max_PopMax_AF are annotated in the output VCF file."
+                         " `-a` can be used to add additional annotations, with each anntotation seperated by a space"
                          " (Example ' -a mf best pops ' ). Choices = [{}]").format(", ".join(extra_annotation_choices))
     )
 
@@ -87,59 +87,61 @@ def add_annotation(parser):
                     type=float,
                     help=("Add an annotation reflecting how much of the queried SV genomic space has been previously observed with the same SVTYPE."
                           "Uses the data sources listed with -s as the previously observed SVs."
-                          "Please provide minimum AF to exclude all SVs from data sources with a total AF below that value (must be between 0 and 1.0)")
+                          "Please provide minimum AF to exclude all SVs from data sources with a total AF below that value (must be between 0 and 1.0).")
     )
     
     opt.add_argument('-u', '--uniq',
                     metavar='UNIQUE SV REGIONS',
                     type=float,
-                    help=("Generate a file of unique SV regions called 'unique.bed'"
+                    help=("Generate a file of unique SV regions called 'unique.bed'."
                           "These regions reflect genomic space within the queried SV region that have not been previously observed with the same SVTYPE."
                           "This will also add an annotation regarding the number of unique regions within a given SV."
-                          "Please provide minimum AF to exclude all SVs from data sources with a total AF below that value (must be between 0 and 1.0)")
+                          "Please provide minimum AF to exclude all SVs from data sources with a total AF below that value (must be between 0 and 1.0).")
     )
 
     opt.add_argument("-l", "--lim",
                    metavar="SV SIZE LIMIT",
                    type=int,
-                   help="Only include previously oberseved SVs from data sources with a size less than or equal to this value (only available when using --cov or --uniq)"
+                   help="Only include previously observed SVs from data sources with a size less than or equal to this value (only available when using --cov or --uniq)."
     )
 
     opt.add_argument('-t', '--target',
                     metavar='TARGETS BED FILE',
-                     help=("Path to target regions BED file"
+                     help=("Path to target regions BED file."
                            "Expected format is a tab delimited file listing CHROM START END ID"
-                           "Where ID is a genomic region identifier that will be listed as an annotation if an overlap exists between a given SV and the target regions")
+                           "where ID is a genomic region identifier that will be listed as an annotation if an overlap exists between a given SV and the target regions.")
     )
 
     opt.add_argument("-ci", "--ci",
                    metavar="USE CI BOUNDARIES",
                    choices=["in","out"],
-                   help="If argument selected, use 'inner' or 'outer' confidence intervals (CIPOS, CIEND) for SV boundaries. Choices = [in, out]"
+                   help=("If argument is selected, use 'inner' or 'outer' confidence intervals (CIPOS, CIEND) for SV boundaries. Choices = [in, out]"
+                         "Expects CIPOS and CIEND to be included in the INFO field of the input VCF (--vcf).") 
     )
 
     opt.add_argument("-ci95", "--ci95",
                    metavar="USE CI BOUNDARIES",
                    choices=["in","out"],
-                   help="If argument selected, use 'inner' or 'outer' confidence intervals (CIPOS95, CIEND95) for SV boundaries. Choices = [in, out]"
+                   help=("If argument is selected, use 'inner' or 'outer' confidence intervals (CIPOS95, CIEND95) for SV boundaries. Choices = [in, out]"
+                         "Expects CIPOS95 and CIEND95 to be included in the INFO field of the input VCF (--vcf).")
     )
 
     opt.add_argument("-e", "--emb",
                    metavar="EMBIGGEN THE SV SIZE",
                    type=int,
-                   help="Increase the size of the SV coordinates in the VCF (--vcf) by a single integer; Subtract that value from the start and add it to the end of each set of coordinates."
+                   help="Increase the size of the SV coordinates in the input VCF (--vcf) by a single integer; Subtract that value from the start and add it to the end of each set of coordinates."
     )
 
     opt.add_argument("-r", "--red",
                    metavar="REDUCE THE SV SIZE",
                    type=int,
-                   help="Reduce the size of the SV coordinates in the VCF (--vcf) by a single integer; Add that value to the start and subtract it from the end of each set of coordinates."
+                   help="Reduce the size of the SV coordinates in the input VCF (--vcf) by a single integer; Add that value to the start and subtract it from the end of each set of coordinates."
     )
 
     opt.add_argument("--cpu",
                    metavar="CPU Count",
                    default = 1,
-                   help="The number of cpus to use for multi-threading (Default = 1)"
+                   help="The number of cpus to use for multi-threading (Default = 1)."
     )
 
     p.set_defaults(func=annotate)
