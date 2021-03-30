@@ -152,19 +152,28 @@ been tested on VCFs created by other SV callers. As long as SVTYPE and END
 follows expected VCF conventions should be usable with SVAFotate.
 
 SVAFotate also requires a BED file corresponding to population SV data. A
-BED file is provided along with SVAFotate, called SVAFotate_core_SV_popAFs.GRCh38.bed.gz,
-and was compiled using information gathered from the publicly available
+BED file is provided along with SVAFotate, called:
+
+```
+SVAFotate_core_SV_popAFs.GRCh38.bed.gz
+```
+
+This file can be found in the [supporting_data](https://github.com/fakedrtom/SVAFotate/tree/master/supporting_data)
+folder. The BED file was compiled using information gathered from the publicly available
 CCDG, gnomAD, and 1000G SV callsets. AF related data (including HOM_REF, HET,
 and HOM_ALT counts, where available), were parsed from these into a single BED
-file. A different BED file could be used or customized data could be added
-to the provided BED file, but please note that SVAFotate expects specific
-columns and their order placement to be present in the BED file. If a
-different BED file is used or additional data is added to the provided BED,
-please ensure that it follows the same ordering and column information. Please
-note that all columns do need to be populated with actual data and where data is
-unavailable an 'NA' should suffice. As a minimum, it is recommended that any other
-BED file used or other data added to this provided BED file include: CHROM, START,
-END, SVLEN, SVTYPE, SOURCE, SV_ID, and AF.
+file. CCDG and 1000G data were provided with GRCh38 alignments, but gnomAD data
+was generated using GRCh37 alignments. These have been converted to GRCh38 using
+[UCSC's command-line liftover tool](https://genome.ucsc.edu/cgi-bin/hgLiftOver). A
+different BED file could be used or customized data could be added to the provided
+BED file, but please note that SVAFotate expects specific columns, their header
+names, and their order placement to be present in the BED file. If a different BED
+file is used or additional data is added to the provided BED, please ensure that
+it follows the same ordering and column information. Please note that all columns
+do need to be populated with actual data and where data is unavailable an 'NA' is
+recommended. As a minimum, it is necessary that any other BED file used or other
+data added to this provided BED file include: CHROM, START, END, SVLEN, SVTYPE,
+SOURCE, SV_ID, and AF.
 
 **pickle-source**
 
