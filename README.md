@@ -88,16 +88,6 @@ your SV VCF based on overlapping matches between SVs in an input VCF and SVs
 in a provided BED file.
 
 ```
-svafotate annotate -h
-usage: svafotate annotate [-h] -v INPUT VCF -o OUTPUT VCF [-b SOURCE BED] [-p Pickled Source Data] [-f [MINIMUM OVERLAP FRACTION [MINIMUM OVERLAP FRACTION ...]]]
-                          [-s [SOURCES TO ANNOTATE [SOURCES TO ANNOTATE ...]]] [-a [EXTRA ANNOTATIONS [EXTRA ANNOTATIONS ...]]] [-c OBSERVED SV COVERAGE] [-u UNIQUE SV REGIONS] [-l SV SIZE LIMIT]
-                          [-t TARGETS BED FILE] [-ci USE CI BOUNDARIES] [-ci95 USE CI BOUNDARIES] [-e EMBIGGEN THE SV SIZE] [-r REDUCE THE SV SIZE] [--cpu CPU Count]
-			  
-Annotate your SV VCF files with Population Allele Frequency Info
-
-help:
-  -h, --help            show this help message and exit
-
 Required Arguments:
   -v INPUT VCF, --vcf INPUT VCF
                         Path and/or name of the VCF file to annotate.
@@ -110,40 +100,8 @@ Requires Only One Argument:
                         Path and/or name of the combined sources AF bed file (--pickled-source can be used instead of --bed) (NOTE: --bed takes higher priority than --pickled-source).
   -p Pickled Source Data, --pickled-source Pickled Source Data
                         Path and/or name of the pickled source data to use (--bed can be used instead of --pickled-source) (NOTE: if --bed is provided, --pickled-source is ignored).
-
-Optional Arguments:
-  -f [MINIMUM OVERLAP FRACTION [MINIMUM OVERLAP FRACTION ...]], --minf [MINIMUM OVERLAP FRACTION [MINIMUM OVERLAP FRACTION ...]]
-                        A space seperated list of minimum reciprocal overlap fractions required between SVs for each source listed with the `-s` option. If `-s` is not used, only the first minf will be
-                        used and will be applied to all sources. minf values must be between 0.0 and 1.0 (Default = 0.001).
-  -s [SOURCES TO ANNOTATE [SOURCES TO ANNOTATE ...]], --sources [SOURCES TO ANNOTATE [SOURCES TO ANNOTATE ...]]
-                        Space seperated list of data sources to use for annotation. If '-s' is not used, all sources available in the source bed file will be used (Example: ' -s CCDG gnomAD ' ).
-  -a [EXTRA ANNOTATIONS [EXTRA ANNOTATIONS ...]], --ann [EXTRA ANNOTATIONS [EXTRA ANNOTATIONS ...]]
-                        By default, only the Max_AF, Max_Hets and Max_HomAlt counts, and Max_PopMax_AF are annotated in the output VCF file. `-a` can be used to add additional annotations, with each
-                        anntotation seperated by a space (Example ' -a mf best pops ' ). Choices = [all, mf, best, pops, AFR, AMR, EAS, EUR, OTH, SAS, full, mis]
-  -c OBSERVED SV COVERAGE, --cov OBSERVED SV COVERAGE
-                        Add an annotation reflecting how much of the queried SV genomic space has been previously observed with the same SVTYPE. Uses the data sources listed with -s as the previously
-                        observed SVs. Please provide minimum AF to exclude all SVs from data sources with a total AF below that value (must be between 0 and 1.0).
-  -u UNIQUE SV REGIONS, --uniq UNIQUE SV REGIONS
-                        Generate a file of unique SV regions called 'unique.bed'. These regions reflect genomic space within the queried SV region that have not been previously observed with the same
-                        SVTYPE. This will also add an annotation regarding the number of unique regions within a given SV. Please provide minimum AF to exclude all SVs from data sources with a total AF
-                        below that value (must be between 0 and 1.0).
-  -l SV SIZE LIMIT, --lim SV SIZE LIMIT
-                        Only include previously observed SVs from data sources with a size less than or equal to this value (only available when using --cov or --uniq).
-  -t TARGETS BED FILE, --target TARGETS BED FILE
-                        Path to target regions BED file. Expected format is a tab delimited file listing CHROM START END ID where ID is a genomic region identifier that will be listed as an annotation
-                        if an overlap exists between a given SV and the target regions.
-  -ci USE CI BOUNDARIES, --ci USE CI BOUNDARIES
-                        Expects CIPOS and CIEND to be included in the INFO field of the input VCF (--vcf). If argument is selected, use 'inner' or 'outer' confidence intervals (CIPOS, CIEND) for SV
-                        boundaries. Choices = [in, out]
-  -ci95 USE CI BOUNDARIES, --ci95 USE CI BOUNDARIES
-                        Expects CIPOS95 and CIEND95 to be included in the INFO field of the input VCF (--vcf). If argument is selected, use 'inner' or 'outer' confidence intervals (CIPOS95, CIEND95) for
-                        SV boundaries. Choices = [in, out]
-  -e EMBIGGEN THE SV SIZE, --emb EMBIGGEN THE SV SIZE
-                        Increase the size of the SV coordinates in the input VCF (--vcf) by a single integer; Subtract that value from the start and add it to the end of each set of coordinates.
-  -r REDUCE THE SV SIZE, --red REDUCE THE SV SIZE
-                        Reduce the size of the SV coordinates in the input VCF (--vcf) by a single integer; Add that value to the start and subtract it from the end of each set of coordinates.
-  --cpu CPU Count       The number of cpus to use for multi-threading (Default = 1).
 ```
+
 
 As stated, this requires an input VCF (`-v`) and output VCF name (`-o`). SVAFotate was
 developed using SV VCFs derived from the Lumpy SV caller, however it has
@@ -200,20 +158,55 @@ Matching SVs are defined as SVs from the input VCF that share overlapping genomi
 coordinates with SVs provided in the BED file and that are described as having the same
 SVTYPE. For each of these annotations the maximum values from all matching SVs is returned.
 For example, if an SV from the input VCF matches with 4 different SVs of the same SVTYPE
-in the BED file with reported AFs of 0.01, 0.03, 0.63, and 0.09, the `Max_AF` annotation
-that is added will be 0.63.
+corresponding to SVs from CCDG, gnomAD, and 1000G in the BED file, with reported AFs of
+0.01, 0.03, 0.63, and 0.09, the `Max_AF` annotation that is added will be 0.63.
 
 ![max_af](https://github.com/fakedrtom/SVAFotate/blob/master/images/max_AF_example_fig.png)
 
-Please note that each of these annotations is determined independent of one another.
+Please note that each of these annotations is determined independently of one another.
 That is to say, just because the SV with an AF of 0.63 is returned for the `Max_AF`
 annotation, the HET or HOM_ALT genotype counts corresponding to the SV with the AF
 of 0.63 are not necessarily going to be returned for the `Max_Het` and `Max_HomAlt`
 annotations unless they are also the maximum values from all matching SVs (in this
 case they likely would be given the wide disparity between AFs in all matching SVs). 
 
-However there are a number of optional parameters that may result in improved or more
-detailed annotations
+Beyond the defaults of SVAFotate are a number of optional parameters that may result
+in improved or more detailed annotations. 
+
+```
+Optional Arguments:
+  -f [MINIMUM OVERLAP FRACTION [MINIMUM OVERLAP FRACTION ...]], --minf [MINIMUM OVERLAP FRACTION [MINIMUM OVERLAP FRACTION ...]]
+                        A space seperated list of minimum reciprocal overlap fractions required between SVs for each source listed with the `-s` option. If `-s` is not used, only the first minf will be
+                        used and will be applied to all sources. minf values must be between 0.0 and 1.0 (Default = 0.001).
+  -s [SOURCES TO ANNOTATE [SOURCES TO ANNOTATE ...]], --sources [SOURCES TO ANNOTATE [SOURCES TO ANNOTATE ...]]
+                        Space seperated list of data sources to use for annotation. If '-s' is not used, all sources available in the source bed file will be used (Example: ' -s CCDG gnomAD ' ).
+  -a [EXTRA ANNOTATIONS [EXTRA ANNOTATIONS ...]], --ann [EXTRA ANNOTATIONS [EXTRA ANNOTATIONS ...]]
+                        By default, only the Max_AF, Max_Hets and Max_HomAlt counts, and Max_PopMax_AF are annotated in the output VCF file. `-a` can be used to add additional annotations, with each
+                        anntotation seperated by a space (Example ' -a mf best pops ' ). Choices = [all, mf, best, pops, AFR, AMR, EAS, EUR, OTH, SAS, full, mis]
+  -c OBSERVED SV COVERAGE, --cov OBSERVED SV COVERAGE
+                        Add an annotation reflecting how much of the queried SV genomic space has been previously observed with the same SVTYPE. Uses the data sources listed with -s as the previously
+                        observed SVs. Please provide minimum AF to exclude all SVs from data sources with a total AF below that value (must be between 0 and 1.0).
+  -u UNIQUE SV REGIONS, --uniq UNIQUE SV REGIONS
+                        Generate a file of unique SV regions called 'unique.bed'. These regions reflect genomic space within the queried SV region that have not been previously observed with the same
+                        SVTYPE. This will also add an annotation regarding the number of unique regions within a given SV. Please provide minimum AF to exclude all SVs from data sources with a total AF
+                        below that value (must be between 0 and 1.0).
+  -l SV SIZE LIMIT, --lim SV SIZE LIMIT
+                        Only include previously observed SVs from data sources with a size less than or equal to this value (only available when using --cov or --uniq).
+  -t TARGETS BED FILE, --target TARGETS BED FILE
+                        Path to target regions BED file. Expected format is a tab delimited file listing CHROM START END ID where ID is a genomic region identifier that will be listed as an annotation
+                        if an overlap exists between a given SV and the target regions.
+  -ci USE CI BOUNDARIES, --ci USE CI BOUNDARIES
+                        Expects CIPOS and CIEND to be included in the INFO field of the input VCF (--vcf). If argument is selected, use 'inner' or 'outer' confidence intervals (CIPOS, CIEND) for SV
+                        boundaries. Choices = [in, out]
+  -ci95 USE CI BOUNDARIES, --ci95 USE CI BOUNDARIES
+                        Expects CIPOS95 and CIEND95 to be included in the INFO field of the input VCF (--vcf). If argument is selected, use 'inner' or 'outer' confidence intervals (CIPOS95, CIEND95) for
+                        SV boundaries. Choices = [in, out]
+  -e EMBIGGEN THE SV SIZE, --emb EMBIGGEN THE SV SIZE
+                        Increase the size of the SV coordinates in the input VCF (--vcf) by a single integer; Subtract that value from the start and add it to the end of each set of coordinates.
+  -r REDUCE THE SV SIZE, --red REDUCE THE SV SIZE
+                        Reduce the size of the SV coordinates in the input VCF (--vcf) by a single integer; Add that value to the start and subtract it from the end of each set of coordinates.
+  --cpu CPU Count       The number of cpus to use for multi-threading (Default = 1).
+```
 
 **pickle-source**
 
