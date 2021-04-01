@@ -61,8 +61,8 @@ svafotate 0.0.1
 
 Usage
 ========================
-There are currently three SVAFotate subcommands: **annotate**,
-**pickle-source**, and **custom-annotation**.
+There are currently three SVAFotate subcommands: `annotate`,
+`pickle-source`, and `custom-annotation`.
 
 ```
 $ svafotate -h
@@ -83,9 +83,9 @@ optional arguments:
 
 **annotate**
 
-Adds AF related metrics to your SV VCF based on overlapping matches
-between SVs in an input VCF and SVs in a provided BED file. This is
-the main functionality of SVAFotate. 
+This is the main functionality of SVAFotate and adds AF related metrics to
+your SV VCF based on overlapping matches between SVs in an input VCF and SVs
+in a provided BED file.
 
 ```
 svafotate annotate -h
@@ -145,13 +145,13 @@ Optional Arguments:
   --cpu CPU Count       The number of cpus to use for multi-threading (Default = 1).
 ```
 
-As stated, this requires an input VCF and output VCF name. SVAFotate was
+As stated, this requires an input VCF (`-v`) and output VCF name (`-o`). SVAFotate was
 developed using SV VCFs derived from the Lumpy SV caller, however it has
 been tested on VCFs created by other SV callers. As long as SVTYPE and END
 (preferably SVLEN as well) are included in the INFO fields, any SV VCF that
 follows expected VCF conventions should be usable with SVAFotate.
 
-SVAFotate also requires a BED file corresponding to population SV data. A
+SVAFotate also requires a BED file corresponding to population SV data (`-b`). A
 BED file is provided along with SVAFotate, called:
 
 ```
@@ -161,7 +161,7 @@ SVAFotate_core_SV_popAFs.GRCh38.bed.gz
 This file can be found in the [supporting_data](https://github.com/fakedrtom/SVAFotate/tree/master/supporting_data)
 folder. The BED file was compiled using information gathered from the publicly available
 CCDG, gnomAD, and 1000G SV callsets. AF related data (including HOM_REF, HET,
-and HOM_ALT counts, where available), were parsed from these into a single BED
+and HOM_ALT genotype counts, where available), were parsed from these into a single BED
 file. CCDG and 1000G data were provided with GRCh38 alignments, but gnomAD data
 was generated using GRCh37 alignments. These have been converted to GRCh38 using
 [UCSC's command-line liftover tool](https://genome.ucsc.edu/cgi-bin/hgLiftOver). A
@@ -169,13 +169,64 @@ different BED file could be used or customized data could be added to the provid
 BED file, but please note that SVAFotate expects specific columns, their header
 names, and their order placement to be present in the BED file. If a different BED
 file is used or additional data is added to the provided BED, please ensure that
-it follows the same ordering and column information. Please note that all columns
-do need to be populated with actual data and where data is unavailable an 'NA' is
-recommended. As a minimum, it is necessary that any other BED file used or other
-data added to this provided BED file include: CHROM, START, END, SVLEN, SVTYPE,
-SOURCE, SV_ID, and AF.
+it follows the same ordering and column information as found in `SVAFotate_core_SV_popAFs.GRCh38.bed.gz`.
+Please note that all columns do need to be populated with actual data and where
+data is unavailable an 'NA' is recommended. As a minimum, it is necessary that any
+other BED file used or other data added to this provided BED file include: CHROM,
+START, END, SVLEN, SVTYPE, SOURCE, SV_ID, and AF.
+
+A serialized pickle object of the BED file can be used in place of the BED file (`-p`).
+This may result in faster performance when using the SVAFotate `annotate` subcommand.
+Included with SVAFotate is the subcommand `pickle-source` which enables a pickle object
+of a BED file to be generated and then repeatedly used with the `annotate` subcommand.
+
+The bare minimum to run the `annotate` subcommand is:
+
+```
+svafotate annotate -v in.vcf.gz -o out.vcf -b SVAFotate_core_SV_popAFs.GRCh38.bed.gz
+```
+
+By default, SVAFotate will add the following annotations to the INFO field of the input
+VCF:
+
+```
+Max_AF		 The maximum AF from all matching SVs across all specified data sources found in the provided BED file
+Max_Het	      	 The maximum Het count from all matching SVs across all specified data sources found in the provided BED file
+Max_HomAlt    	 The maximum HomAlt count from all matching SVs across all specified data sources found in the provided BED file
+Max_PopMax_AF	 The maximum PopMax_AF from all matching SVs across all specified data sources found in the provided BED file
+```
+
+Matching SVs are defined as SVs from the input VCF that share overlapping genomic
+coordinates with SVs provided in the BED file and that are described as having the same
+SVTYPE. For each of these annotations the maximum values from all matching SVs is returned.
+For example, if an SV from the input VCF matches with 4 different SVs of the same SVTYPE
+in the BED file with reported AFs of 0.01, 0.03, 0.63, and 0.09, the `Max_AF` annotation
+that is added will be 0.63.
+
+![max_af](https://github.com/fakedrtom/SVAFotate/blob/master/images/max_AF_example_fig.png)
+
+Please note that each of these annotations is determined independent of one another.
+That is to say, just because the SV with an AF of 0.63 is returned for the `Max_AF`
+annotation, the HET or HOM_ALT genotype counts corresponding to the SV with the AF
+of 0.63 are not necessarily going to be returned for the `Max_Het` and `Max_HomAlt`
+annotations unless they are also the maximum values from all matching SVs (in this
+case they likely would be given the wide disparity between AFs in all matching SVs). 
+
+However there are a number of optional parameters that may result in improved or more
+detailed annotations
 
 **pickle-source**
+
+Since SVAFotate may be used repeatedly on different SV VCFs with the same BED file, it
+may be advantageous to create a pickle object of the BED file to improve SVAFotate's
+performance when running the `annotate` subcommand. This is optional. If SVAFotate or
+the BED file used with the `annotate` subcommand is seldom needed, creating a pickle object
+of that BED file is probably not necessary. Nevertheless, creating a pickle object out
+of a BED file is straightforward and can be accomplished with the following command:
+
+```
+svafotate pickle-source --bed SVAFotate_core_SV_popAFs.GRCh38.bed.gz --out SVAFotate_core_SV_popAFs.GRCh38.pickle
+```
 
 **custom-annotation***
 
