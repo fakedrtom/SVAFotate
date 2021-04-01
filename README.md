@@ -157,9 +157,13 @@ Max_PopMax_AF	 The maximum PopMax_AF from all matching SVs across all specified 
 Matching SVs are defined as SVs from the input VCF that share overlapping genomic
 coordinates with SVs provided in the BED file and that are described as having the same
 SVTYPE. For each of these annotations the maximum values from all matching SVs is returned.
-For example, if an SV from the input VCF matches with 4 different SVs of the same SVTYPE
-corresponding to SVs from CCDG, gnomAD, and 1000G in the BED file, with reported AFs of
-0.01, 0.03, 0.63, and 0.09, the `Max_AF` annotation that is added will be 0.63.
+If there are no matching SVs, each of these annotations will be added with a 0 or 0.0 value.
+The following figure provides example input SVs compared to SVs of the same SVTYPE derived
+from the CCDG, gnomAD, and 1000G datasets, which are included with the input BED file.
+Consider the example SV on the far right which has matches with 4 different SVs of the same
+SVTYPE from CCDG, gnomAD, and 1000G in the BED file, and these have reported AFs of
+0.01, 0.03, 0.63, and 0.09. In this case the `Max_AF` annotation that is added to the
+input SV will be 0.63.
 
 ![max_af](https://github.com/fakedrtom/SVAFotate/blob/master/images/max_AF_example_fig.png)
 
@@ -168,7 +172,7 @@ That is to say, just because the SV with an AF of 0.63 is returned for the `Max_
 annotation, the HET or HOM_ALT genotype counts corresponding to the SV with the AF
 of 0.63 are not necessarily going to be returned for the `Max_Het` and `Max_HomAlt`
 annotations unless they are also the maximum values from all matching SVs (in this
-case they likely would be given the wide disparity between AFs in all matching SVs). 
+case they likely would be added given the wide disparity between AFs in all matching SVs). 
 
 Beyond the defaults of SVAFotate are a number of optional parameters that may result
 in improved or more detailed annotations. 
