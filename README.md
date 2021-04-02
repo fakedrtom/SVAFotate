@@ -128,7 +128,7 @@ BED file, but please note that SVAFotate expects specific columns, their header
 names, and their order placement to be present in the BED file. If a different BED
 file is used or additional data is added to the provided BED, please ensure that
 it follows the same ordering and column information as found in `SVAFotate_core_SV_popAFs.GRCh38.bed.gz`.
-Please note that all columns do need to be populated with actual data and where
+Please note that all columns do *not* need to be populated with actual data and where
 data is unavailable an 'NA' is recommended. As a minimum, it is necessary that any
 other BED file used or other data added to this provided BED file include: CHROM,
 START, END, SVLEN, SVTYPE, SOURCE, SV_ID, and AF.
@@ -174,14 +174,26 @@ of 0.63 are not necessarily going to be returned for the `Max_Het` and `Max_HomA
 annotations unless they are also the maximum values from all matching SVs (in this
 case they likely would be added given the wide disparity between AFs in all matching SVs). 
 
-Beyond the defaults of SVAFotate are a number of optional parameters that may result
-in improved or more detailed annotations. 
+Beyond the defaults of SVAFotate are a number of optional arguments that may result
+in improved or more detailed annotations. Some of these are highly recommended for
+most uses of SVAFotate. These options are listed here along with explanations:
 
 ```
-Optional Arguments:
   -f [MINIMUM OVERLAP FRACTION [MINIMUM OVERLAP FRACTION ...]], --minf [MINIMUM OVERLAP FRACTION [MINIMUM OVERLAP FRACTION ...]]
                         A space seperated list of minimum reciprocal overlap fractions required between SVs for each source listed with the `-s` option. If `-s` is not used, only the first minf will be
                         used and will be applied to all sources. minf values must be between 0.0 and 1.0 (Default = 0.001).
+```
+
+By default, SVAFotate will consider any overlap of genomic coordinates between SVs from the
+input VCF and SVs in the supplied BED file, even those of a single base pair. This could result
+in imprecise matching of SVs that do not actually reflect similar SVs. **It is highly
+recommended to use the `-f` option to increase the required amount of reciprocal overlap
+between putative matching SVs**. The higher the value of `-f`, the more exact the overlapping
+match between SVs must be (and likely the more precise and limited the number of overlapping
+matches will be). For example, a `-f` value of 0.9 would require that 90% of the genomic region
+belonging to an SV from the input VCF must overlap with at least 90% of the genomic region
+belonging to an SV in the BED file in order to be considered a matching SV.
+
   -s [SOURCES TO ANNOTATE [SOURCES TO ANNOTATE ...]], --sources [SOURCES TO ANNOTATE [SOURCES TO ANNOTATE ...]]
                         Space seperated list of data sources to use for annotation. If '-s' is not used, all sources available in the source bed file will be used (Example: ' -s CCDG gnomAD ' ).
   -a [EXTRA ANNOTATIONS [EXTRA ANNOTATIONS ...]], --ann [EXTRA ANNOTATIONS [EXTRA ANNOTATIONS ...]]
