@@ -185,42 +185,79 @@ most uses of SVAFotate. These options are listed here along with explanations:
 ```
 
 By default, SVAFotate will consider any overlap of genomic coordinates between SVs from the
-input VCF and SVs in the supplied BED file, even those of a single base pair. This could result
-in imprecise matching of SVs that do not actually reflect similar SVs. **It is highly
-recommended to use the `-f` option to increase the required amount of reciprocal overlap
-between putative matching SVs**. The higher the value of `-f`, the more exact the overlapping
-match between SVs must be (and likely the more precise and limited the number of overlapping
-matches will be). For example, a `-f` value of 0.9 would require that 90% of the genomic region
-belonging to an SV from the input VCF must overlap with at least 90% of the genomic region
-belonging to an SV in the BED file in order to be considered a matching SV.
+input VCF and SVs in the supplied BED file, even those of a single base pair, as matching SVs.
+While this represents all possible overlaps, it could result in imprecise matching of SVs
+that do not actually reflect similar SV alleles. **It is highly recommended to use the `-f` option
+to increase the required amount of reciprocal overlap between putative matching SVs**. The
+higher the value of `-f`, the more exact the overlapping match between SVs must be (and
+likely the more precise and limited the number of overlapping matches will be). For example,
+a `-f` value of 0.9 would require that 90% of the genomic region belonging to an SV from
+the input VCF must overlap with at least 90% of the genomic region belonging to an SV in
+the BED file in order to be considered a matching SV. Given the inherent variance of SV
+breakpoints, it is difficult to presume what the best value for `-f` is, but a minimum of
+0.5 should be a decent starting value to consider.
 
+```
   -s [SOURCES TO ANNOTATE [SOURCES TO ANNOTATE ...]], --sources [SOURCES TO ANNOTATE [SOURCES TO ANNOTATE ...]]
                         Space seperated list of data sources to use for annotation. If '-s' is not used, all sources available in the source bed file will be used (Example: ' -s CCDG gnomAD ' ).
+```
+
+The required BED file for running the `annotate` subcommand may contain SV data from multiple
+datasets. The `SOURCE` column in this BED file refers to the source for the given variants. For
+example, the supplied `SVAFotate_core_SV_popAFs.GRCh38.bed.gz` file contains SVs from CCDG,
+gnomAD, and 1000G sources. By default SVAFotate will consider all SVs in the BED file for
+determining potential matches. If annotations based on comparisons with select sources only
+is desired, the `-s` parameter will reduce the considered SVs from the BED file to only those
+belonging to the requested sources. A single source could be selected or any combination of
+included sources from the BED file.
+
+```
   -a [EXTRA ANNOTATIONS [EXTRA ANNOTATIONS ...]], --ann [EXTRA ANNOTATIONS [EXTRA ANNOTATIONS ...]]
                         By default, only the Max_AF, Max_Hets and Max_HomAlt counts, and Max_PopMax_AF are annotated in the output VCF file. `-a` can be used to add additional annotations, with each
                         anntotation seperated by a space (Example ' -a mf best pops ' ). Choices = [all, mf, best, pops, AFR, AMR, EAS, EUR, OTH, SAS, full, mis]
+```
+
+```
   -c OBSERVED SV COVERAGE, --cov OBSERVED SV COVERAGE
                         Add an annotation reflecting how much of the queried SV genomic space has been previously observed with the same SVTYPE. Uses the data sources listed with -s as the previously
                         observed SVs. Please provide minimum AF to exclude all SVs from data sources with a total AF below that value (must be between 0 and 1.0).
+```
+
+```
   -u UNIQUE SV REGIONS, --uniq UNIQUE SV REGIONS
                         Generate a file of unique SV regions called 'unique.bed'. These regions reflect genomic space within the queried SV region that have not been previously observed with the same
                         SVTYPE. This will also add an annotation regarding the number of unique regions within a given SV. Please provide minimum AF to exclude all SVs from data sources with a total AF
                         below that value (must be between 0 and 1.0).
+```
+
+```
   -l SV SIZE LIMIT, --lim SV SIZE LIMIT
                         Only include previously observed SVs from data sources with a size less than or equal to this value (only available when using --cov or --uniq).
+```
+
+```
   -t TARGETS BED FILE, --target TARGETS BED FILE
                         Path to target regions BED file. Expected format is a tab delimited file listing CHROM START END ID where ID is a genomic region identifier that will be listed as an annotation
                         if an overlap exists between a given SV and the target regions.
+```
+
+```
   -ci USE CI BOUNDARIES, --ci USE CI BOUNDARIES
                         Expects CIPOS and CIEND to be included in the INFO field of the input VCF (--vcf). If argument is selected, use 'inner' or 'outer' confidence intervals (CIPOS, CIEND) for SV
                         boundaries. Choices = [in, out]
   -ci95 USE CI BOUNDARIES, --ci95 USE CI BOUNDARIES
                         Expects CIPOS95 and CIEND95 to be included in the INFO field of the input VCF (--vcf). If argument is selected, use 'inner' or 'outer' confidence intervals (CIPOS95, CIEND95) for
                         SV boundaries. Choices = [in, out]
+```
+
+```
   -e EMBIGGEN THE SV SIZE, --emb EMBIGGEN THE SV SIZE
                         Increase the size of the SV coordinates in the input VCF (--vcf) by a single integer; Subtract that value from the start and add it to the end of each set of coordinates.
   -r REDUCE THE SV SIZE, --red REDUCE THE SV SIZE
                         Reduce the size of the SV coordinates in the input VCF (--vcf) by a single integer; Add that value to the start and subtract it from the end of each set of coordinates.
+```
+
+```
   --cpu CPU Count       The number of cpus to use for multi-threading (Default = 1).
 ```
 
