@@ -203,8 +203,8 @@ breakpoints, it is difficult to presume what the best value for `-f` is, but a m
 ```
 
 The required BED file for running the `annotate` subcommand may contain SV data from multiple
-datasets. The `SOURCE` column in this BED file refers to the source for the given variants. For
-example, the supplied `SVAFotate_core_SV_popAFs.GRCh38.bed.gz` file contains SVs from CCDG,
+datasets. The `SOURCE` column in this BED file refers to the source for the given SVs. For
+example, the supplied `SVAFotate_core_SV_popAFs.GRCh38.bed.gz` file contains SVs from the CCDG,
 gnomAD, and 1000G sources. By default SVAFotate will consider all SVs in the BED file for
 determining potential matches. If annotations based on comparisons with select sources only
 is desired, the `-s` parameter will reduce the considered SVs from the BED file to only those
@@ -235,11 +235,26 @@ included sources from the BED file.
                         Only include previously observed SVs from data sources with a size less than or equal to this value (only available when using --cov or --uniq).
 ```
 
+If any SVs in the BED file are exceedingly large, they may have big affects on the determination
+of observed SV coverage and unique SV regions. For example, CCDG reports an exceptionally rare
+deletion that is over 61Mb in size. This event is likely to overlap with many putative deletions
+that likely represent distinct SV events. Considering this may obscure meaningful coverage and
+unique region annotationss, the SV size limit `-l` is available. Without including a size limit
+with the `-l` option all of these example events would show observed SV coverage of 1.0 and no
+unique SV regions regardless of other more precise matches. By including an SV size limit
+alongside the `-c` or `-u` options, such scenarios can be avoided.
+
 ```
   -t TARGETS BED FILE, --target TARGETS BED FILE
                         Path to target regions BED file. Expected format is a tab delimited file listing CHROM START END ID where ID is a genomic region identifier that will be listed as an annotation
                         if an overlap exists between a given SV and the target regions.
 ```
+
+There may be particular genomic regions where an overlap with any reported SV event would be of
+interest. Using the `-t` option and supplying a simple BED file consisting of CHROM, START, END,
+and a region identifier will create a `Target_Overlaps` annotation that lists the supplied
+region identifier for all overlaps between the SV and the regions in this targets BED file. Regions
+of interest may include gene, specific exons, promoters, enhancers, etc.
 
 ```
   -ci USE CI BOUNDARIES, --ci USE CI BOUNDARIES
@@ -250,6 +265,12 @@ included sources from the BED file.
                         SV boundaries. Choices = [in, out]
 ```
 
+Lumpy and other SV callers may generate confidence interval metrics for predicted SV breakpoints. To
+use these confidence intervals instead of the given START and END coordinates, the `-ci` or `-ci95`
+options may be used. If CIPOS and CIEND or CIPOS95 and CIEND95 are not present in the INFO field
+for a given SV in the input VCF these options will not work. Please be sure to consider the adjustments
+to SV genomic coordinates when using the `-f` option for requiring reciprocal overlaps.
+
 ```
   -e EMBIGGEN THE SV SIZE, --emb EMBIGGEN THE SV SIZE
                         Increase the size of the SV coordinates in the input VCF (--vcf) by a single integer; Subtract that value from the start and add it to the end of each set of coordinates.
@@ -257,9 +278,17 @@ included sources from the BED file.
                         Reduce the size of the SV coordinates in the input VCF (--vcf) by a single integer; Add that value to the start and subtract it from the end of each set of coordinates.
 ```
 
+It may be helpful in some cases to adjust the reported SV breakpoints for the SVs in the
+input VCF. The genomic space corresponding to a reported SV may be enlarged using the
+`-e` option or reduced using the `-r` option. Please be sure to consider the adjustments to SV
+genomic coordinates when using the `-f` option for requiring reciprocal overlaps.
+
 ```
   --cpu CPU Count       The number of cpus to use for multi-threading (Default = 1).
 ```
+
+SVAFotate may use additional cpus for multi-threading purposes which can be designated using
+the `--cpu` option.
 
 **pickle-source**
 
@@ -274,7 +303,7 @@ of a BED file is straightforward and can be accomplished with the following comm
 svafotate pickle-source --bed SVAFotate_core_SV_popAFs.GRCh38.bed.gz --out SVAFotate_core_SV_popAFs.GRCh38.pickle
 ```
 
-**custom-annotation***
+**custom-annotation**
 
 This is not currently used, but is a placeholder for potential
 future developments.
