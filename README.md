@@ -223,7 +223,17 @@ included sources from the BED file.
                         observed SVs. Please provide minimum AF to exclude all SVs from data sources with a total AF below that value (must be between 0 and 1.0).
 ```
 
+To see how much of a given SV in the input VCF has matching overlaps with SVs of the same
+SVTYPE in the BED file, the `-c` option is provided. This will add the `SV_Cov` annotation
+which reflects the fraction of the genomic coordinates for an SV in the input VCF that
+are found to overlap with matching SVs in the BED file. The following figure provides example
+scenarios with all SVs being the same SVTYPE and the resulting `SV_Cov` annotations that would
+be added to the given SVs. 
+
 ![max_af](https://github.com/fakedrtom/SVAFotate/blob/master/images/SV_Cov_example_fig.png)
+
+Please note that all overlaps from all given sources in the BED file are considered in this
+calculation provided that the matching SVs share the same SVTYPE.
 
 ```
   -u UNIQUE SV REGIONS, --uniq UNIQUE SV REGIONS
@@ -232,7 +242,17 @@ included sources from the BED file.
                         below that value (must be between 0 and 1.0).
 ```
 
+The opposite of the `-c` option is availble with the `-u` option. This will identify
+"unique" regions within a given SV from the input VCF that are defined as sharing no overlap
+with any of the SVs of the same SVTYPE in the BED file. This option will create an additional
+output file named `unique.bed` which will list the coordinates of these unique regions. The
+following figure illustrates how these regions are determined in a variety of matching SV
+scenarios.
+
 ![max_af](https://github.com/fakedrtom/SVAFotate/blob/master/images/SV_Uniq_example_fig.png)
+
+Additionally, the `-u` option will also add the `SV_Uniq` annotation to the VCF which represents
+the number of unique regions found within a given SV from the input VCF.
 
 ```
   -l SV SIZE LIMIT, --lim SV SIZE LIMIT
