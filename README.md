@@ -223,6 +223,8 @@ included sources from the BED file.
                         observed SVs. Please provide minimum AF to exclude all SVs from data sources with a total AF below that value (must be between 0 and 1.0).
 ```
 
+![max_af](https://github.com/fakedrtom/SVAFotate/blob/master/images/SV_Cov_example_fig.png)
+
 ```
   -u UNIQUE SV REGIONS, --uniq UNIQUE SV REGIONS
                         Generate a file of unique SV regions called 'unique.bed'. These regions reflect genomic space within the queried SV region that have not been previously observed with the same
@@ -230,19 +232,22 @@ included sources from the BED file.
                         below that value (must be between 0 and 1.0).
 ```
 
+![max_af](https://github.com/fakedrtom/SVAFotate/blob/master/images/SV_Uniq_example_fig.png)
+
 ```
   -l SV SIZE LIMIT, --lim SV SIZE LIMIT
                         Only include previously observed SVs from data sources with a size less than or equal to this value (only available when using --cov or --uniq).
 ```
 
-If any SVs in the BED file are exceedingly large, they may have big affects on the determination
+If any SVs in the BED file are exceedingly large, they may have big effects on the determination
 of observed SV coverage and unique SV regions. For example, CCDG reports an exceptionally rare
 deletion that is over 61Mb in size. This event is likely to overlap with many putative deletions
 that likely represent distinct SV events. Considering this may obscure meaningful coverage and
-unique region annotationss, the SV size limit `-l` is available. Without including a size limit
-with the `-l` option all of these example events would show observed SV coverage of 1.0 and no
-unique SV regions regardless of other more precise matches. By including an SV size limit
-alongside the `-c` or `-u` options, such scenarios can be avoided.
+unique region annotations and interpretations, the SV size limit `-l` is available. Without
+including a size limit with the `-l` option all of these example events overlapping with the
+very large and rare deletion from CCDG would show observed SV coverage of 1.0 and no
+unique SV regions regardless of other more precise and potentially more meaningful matches.
+By including an SV size limit alongside the `-c` or `-u` options, such scenarios can be avoided.
 
 ```
   -t TARGETS BED FILE, --target TARGETS BED FILE
