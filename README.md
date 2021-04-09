@@ -245,9 +245,10 @@ calculation provided that the matching SVs share the same SVTYPE.
 The opposite of the `-c` option is availble with the `-u` option. This will identify
 "unique" regions within a given SV from the input VCF that are defined as sharing no overlap
 with any of the SVs of the same SVTYPE in the BED file. This option will create an additional
-output file named `unique.bed` which will list the coordinates of these unique regions. The
-following figure illustrates how these regions are determined in a variety of matching SV
-scenarios.
+output file named `unique.bed` which will list the coordinates of these unique regions, their
+corresponding SVTYPE, the SV_ID of the SV from which they are found, as well the sample names that
+are genotyped as heterozygous (0/1) and homozygous (1/1) for the alternate allele. Thefollowing
+figure illustrates how these regions are determined in a variety of matching SV scenarios.
 
 ![max_af](https://github.com/fakedrtom/SVAFotate/blob/master/images/SV_Uniq_example_fig.png)
 
@@ -279,7 +280,11 @@ There may be particular genomic regions where an overlap with any reported SV ev
 interest. Using the `-t` option and supplying a simple BED file consisting of CHROM, START, END,
 and a region identifier will create a `Target_Overlaps` annotation that lists the supplied
 region identifier for all overlaps between the SV and the regions in this targets BED file. Regions
-of interest may include gene, specific exons, promoters, enhancers, etc.
+of interest may include gene, specific exons, promoters, enhancers, etc. If the `-t` option is
+used when the `-u` option has also been invoked, then the resulting `unique.bed` file from the
+`-u` option will also include a column corresponding to any overlaps found between the unique
+regions and the regions provided by the `-t` option. This column will be populated with the
+region identifier found in the BED file used with the `-t` option.
 
 ```
   -ci USE CI BOUNDARIES, --ci USE CI BOUNDARIES
