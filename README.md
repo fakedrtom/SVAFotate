@@ -250,7 +250,7 @@ Adds the "best" match for each data source including in the BED file (or as spec
 and creates the following annotations:
 
 ```
-Best_'[data_source]'_ID		The SV_ID of the best matching SV for that data source
+Best_[data_source]_ID		The SV_ID of the best matching SV for that data source
 Best_\[data_source\]_AF	    	The AF from the best SV_ID for that data source
 Best_\[data_source\]_Het    	The Het count from the best SV_ID for that data source
 Best_\[data_source\]_HomAlt 	The HomAlt count from the best SV_ID for that data source
