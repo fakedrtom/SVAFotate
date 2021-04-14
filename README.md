@@ -172,7 +172,10 @@ That is to say, just because the SV with an AF of 0.63 is returned for the `Max_
 annotation, the HET or HOM_ALT genotype counts corresponding to the SV with the AF
 of 0.63 are not necessarily going to be returned for the `Max_Het` and `Max_HomAlt`
 annotations unless they are also the maximum values from all matching SVs (in this
-case they likely would be added given the wide disparity between AFs in all matching SVs). 
+case they likely would be added given the wide disparity between AFs in all matching SVs).
+Also by default an annotation reflecting the number of matches per data source in the
+BED file is also added. For example, if CCDG is one of the data sources in the input
+BED file, then `CCDG_Count` is added and lists the number of CCDG matching SVs. 
 
 Beyond the defaults of SVAFotate are a number of optional arguments that may result
 in improved or more detailed annotations. Some of these are highly recommended for
@@ -215,6 +218,104 @@ included sources from the BED file.
   -a [EXTRA ANNOTATIONS [EXTRA ANNOTATIONS ...]], --ann [EXTRA ANNOTATIONS [EXTRA ANNOTATIONS ...]]
                         By default, only the Max_AF, Max_Hets and Max_HomAlt counts, and Max_PopMax_AF are annotated in the output VCF file. `-a` can be used to add additional annotations, with each
                         anntotation seperated by a space (Example ' -a mf best pops ' ). Choices = [all, mf, best, pops, AFR, AMR, EAS, EUR, OTH, SAS, full, mis]
+```
+
+A number of optional annotations are available and can be included using the `-a` option. This
+option requires one or more of the following choices which each add more annotations as described
+here:
+
+*all*
+Adds all of the annotations described by each of the other choices available with `-a`.
+
+*mf*
+Adds male and female annotations including:
+
+```
+Max_Male_AF	    The maximum Male AF from all matching SVs across all specified data sources
+Max_Male_Het	    The maximum Male Het count from all matching SVs across all specified data sources
+Max_Male_HomAlt	    The maximum Male HomAlt count from all matching SVs across all specified data sources
+Max_Female_AF	    The maximum Female AF from all matching SVs across all specified data sources
+Max_Female_Het	    The maximum Female Het count from all matching SVs across all specified data sources
+Max_Female_HomAlt   The maximum Female HomAlt count from all matching SVs across all specified data sources
+```
+
+If used alongside `best`, `pops` or any of the individual population choices, those annotations
+will also include male and female specific annotations regarding AF and genotype counts.
+
+*best*
+Adds the "best" match for each data source including in the BED file (or as specified)
+and creates the following annotations:
+
+```
+Best_\[data_source\]_ID		The SV_ID of the best matching SV for that data source
+Best_\[data_source\]_AF	    	The AF from the best SV_ID for that data source
+Best_\[data_source\]_Het    	The Het count from the best SV_ID for that data source
+Best_\[data_source\]_HomAlt 	The HomAlt count from the best SV_ID for that data source
+Best_\[data_source\]_PopMax_AF	The PopMax_AF from the best SV_ID for that data source
+```
+
+The "best" match here is defined by the matching SVs with the highest overlap fraction
+product (OFP). Calculating the OFP is straightforward and relies on the genomic size of
+overlapping SVs and the amount of overlap that is shared between them.
+
+put image here
+
+From this example, an overlap fraction is calculated for each SV by dividing the amount
+of overlap by the size of each SV, respectively. Then these fractions are multiplied to
+create the OFP. High OFP scores reflect matching SVs that are more identical in terms of
+both their genomic sizes and the amount of overlap they share. Low OFP scores suggest a
+disparity in genomic sizes between matching SVs or a low amount of shared overlap between
+them (or both a discrepancy in sizes and low overlap).
+
+put other image here
+
+If used alongside `mf`, `pops` or any of the individual population choices, "best" annotations
+will also be included for those annotations.
+
+*pops*
+The including BED file `SVAFotate_core_SV_popAFs.GRCh38.bed.gz` contains data from gnomAD and
+1000G which both include population specific metrics belonging to the following populations:
+AFR, AMR, EAS, EUR, OTH, and SAS. The `pops` choice will add the following annotations for all
+populations:
+
+```
+Max_\[population\]_AF	    The maximum population AF from all matching SVs across all specified data sources
+Max_\[population\]_Het	    The maximum population Het count from all matching SVs across all specified data sources
+Max_\[population\]_HomAlt   The maximum population HomAlt count from all matching SVs across all specified data sources
+```
+
+If preferred, individual population designations can be selected instead to add annotations
+pertaining to that population only. If used alongside `mf` or `best`, male and female or "best"
+annotations will also be added.
+
+*full*
+Adds all information available for all matches. This will add the following data source specific
+annotations:
+
+```
+\[data_source\]_Matches	Comma-separated list of each SV match with the data source
+```
+
+Please note that this annotation will include all information available in the BED file
+for all matching SVs. This is the "kitchen sink" annotation for matches.
+
+*mis*
+While matching SVs generally assumes the same SVTYPE. To see if any SVs with a differing SVTYPE
+also overlap with an SV from the input VCF, the `mis` choice is available. This will add
+the following annotations:
+
+Any combination of these choices can be selected, but if `all` is included than all of these
+annotations will be added to the VCF.
+
+```
+\[data_source\]_Mismatches		Comma-separated list of the SV_IDs of overlapping SVs from the data source with different SVTYPEs
+\[data_source\]_Mismatches_Count	The number of overlapping SVs from the data source with different SVTYPEs
+\[data_source\]_Mismatch_SVTYPEs	Comma-separated list of the other overlapping SVTYPEs from the data source
+Best_\[data_source\]_Mismatch_ID	The SV_ID of the best overlapping SV with different SVTYPE from the data source
+Best_\[data_source\]_Mismatch_SVTYPE	The SVTYPE of the best mismatch SV_ID from the data source
+Best_\[data_souerce\]_Mismatch_AF	The AF of the best mismatch SV_ID from the data source 
+Best_\data_source\]_Mismatch_Het	The Het count of the best mismatch SV_ID from the data source 
+Best_\data_source\]_Mismatch_HomAlt	The HomAlt count of the best mismatch SV_ID from the data source 
 ```
 
 ```
