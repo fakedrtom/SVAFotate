@@ -251,17 +251,17 @@ and creates the following annotations:
 
 ```
 Best_[data_source]_ID		The SV_ID of the best matching SV for that data source
-Best_\[data_source\]_AF	    	The AF from the best SV_ID for that data source
-Best_\[data_source\]_Het    	The Het count from the best SV_ID for that data source
-Best_\[data_source\]_HomAlt 	The HomAlt count from the best SV_ID for that data source
-Best_\[data_source\]_PopMax_AF	The PopMax_AF from the best SV_ID for that data source
+Best_[data_source]_AF	    	The AF from the best SV_ID for that data source
+Best_[data_source]_Het    	The Het count from the best SV_ID for that data source
+Best_[data_source]_HomAlt 	The HomAlt count from the best SV_ID for that data source
+Best_[data_source]_PopMax_AF	The PopMax_AF from the best SV_ID for that data source
 ```
 
 The "best" match here is defined by the matching SVs with the highest overlap fraction
 product (OFP). Calculating the OFP is straightforward and relies on the genomic size of
 overlapping SVs and the amount of overlap that is shared between them.
 
-put image here
+*put image here*
 
 From this example, an overlap fraction is calculated for each SV by dividing the amount
 of overlap by the size of each SV, respectively. Then these fractions are multiplied to
@@ -270,21 +270,22 @@ both their genomic sizes and the amount of overlap they share. Low OFP scores su
 disparity in genomic sizes between matching SVs or a low amount of shared overlap between
 them (or both a discrepancy in sizes and low overlap).
 
-put other image here
+*put other image here*
 
 If used alongside `mf`, `pops` or any of the individual population choices, "best" annotations
 will also be included for those annotations.
 
 *pops*
+
 The including BED file `SVAFotate_core_SV_popAFs.GRCh38.bed.gz` contains data from gnomAD and
 1000G which both include population specific metrics belonging to the following populations:
 AFR, AMR, EAS, EUR, OTH, and SAS. The `pops` choice will add the following annotations for all
 populations:
 
 ```
-Max_\[population\]_AF	    The maximum population AF from all matching SVs across all specified data sources
-Max_\[population\]_Het	    The maximum population Het count from all matching SVs across all specified data sources
-Max_\[population\]_HomAlt   The maximum population HomAlt count from all matching SVs across all specified data sources
+Max_[population]_AF	    The maximum population AF from all matching SVs across all specified data sources
+Max_[population]_Het	    The maximum population Het count from all matching SVs across all specified data sources
+Max_[population]_HomAlt	    The maximum population HomAlt count from all matching SVs across all specified data sources
 ```
 
 If preferred, individual population designations can be selected instead to add annotations
@@ -292,34 +293,35 @@ pertaining to that population only. If used alongside `mf` or `best`, male and f
 annotations will also be added.
 
 *full*
+
 Adds all information available for all matches. This will add the following data source specific
 annotations:
 
 ```
-\[data_source\]_Matches	Comma-separated list of each SV match with the data source
+[data_source]_Matches	Comma-separated list of each SV match with the data source
 ```
 
 Please note that this annotation will include all information available in the BED file
 for all matching SVs. This is the "kitchen sink" annotation for matches.
 
 *mis*
+
 While matching SVs generally assumes the same SVTYPE. To see if any SVs with a differing SVTYPE
 also overlap with an SV from the input VCF, the `mis` choice is available. This will add
 the following annotations:
 
+```
+[data_source]_Mismatches		Comma-separated list of the SV_IDs of overlapping SVs from the data source with different SVTYPEs
+[data_source]_Mismatches_Count		The number of overlapping SVs from the data source with different SVTYPEs
+[data_source]_Mismatch_SVTYPEs		Comma-separated list of the other overlapping SVTYPEs from the data source
+Best_[data_source]_Mismatch_ID		The SV_ID of the best overlapping SV with different SVTYPE from the data source
+Best_[data_source]_Mismatch_SVTYPE	The SVTYPE of the best mismatch SV_ID from the data source
+Best_[data_source]_Mismatch_AF		The AF of the best mismatch SV_ID from the data source 
+Best_[data_source]_Mismatch_Het		The Het count of the best mismatch SV_ID from the data source 
+Best_[data_source]_Mismatch_HomAlt	The HomAlt count of the best mismatch SV_ID from the data source 
+```
 Any combination of these choices can be selected, but if `all` is included than all of these
 annotations will be added to the VCF.
-
-```
-\[data_source\]_Mismatches		Comma-separated list of the SV_IDs of overlapping SVs from the data source with different SVTYPEs
-\[data_source\]_Mismatches_Count	The number of overlapping SVs from the data source with different SVTYPEs
-\[data_source\]_Mismatch_SVTYPEs	Comma-separated list of the other overlapping SVTYPEs from the data source
-Best_\[data_source\]_Mismatch_ID	The SV_ID of the best overlapping SV with different SVTYPE from the data source
-Best_\[data_source\]_Mismatch_SVTYPE	The SVTYPE of the best mismatch SV_ID from the data source
-Best_\[data_souerce\]_Mismatch_AF	The AF of the best mismatch SV_ID from the data source 
-Best_\data_source\]_Mismatch_Het	The Het count of the best mismatch SV_ID from the data source 
-Best_\data_source\]_Mismatch_HomAlt	The HomAlt count of the best mismatch SV_ID from the data source 
-```
 
 ```
   -c OBSERVED SV COVERAGE, --cov OBSERVED SV COVERAGE
