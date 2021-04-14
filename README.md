@@ -225,9 +225,11 @@ option requires one or more of the following choices which each add more annotat
 here:
 
 *all*
+
 Adds all of the annotations described by each of the other choices available with `-a`.
 
 *mf*
+
 Adds male and female annotations including:
 
 ```
@@ -243,11 +245,12 @@ If used alongside `best`, `pops` or any of the individual population choices, th
 will also include male and female specific annotations regarding AF and genotype counts.
 
 *best*
+
 Adds the "best" match for each data source including in the BED file (or as specified)
 and creates the following annotations:
 
 ```
-Best_\[data_source\]_ID		The SV_ID of the best matching SV for that data source
+Best_'[data_source]'_ID		The SV_ID of the best matching SV for that data source
 Best_\[data_source\]_AF	    	The AF from the best SV_ID for that data source
 Best_\[data_source\]_Het    	The Het count from the best SV_ID for that data source
 Best_\[data_source\]_HomAlt 	The HomAlt count from the best SV_ID for that data source
