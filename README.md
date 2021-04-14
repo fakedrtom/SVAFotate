@@ -81,8 +81,8 @@ optional arguments:
     custom-annotation   Add custom annotation(s) to source annotation file
 ```
 
-**annotate**
-
+annotate
+------------------------
 This is the main functionality of SVAFotate and adds AF related metrics to
 your SV VCF based on overlapping matches between SVs in an input VCF and SVs
 in a provided BED file.
@@ -181,6 +181,7 @@ Beyond the defaults of SVAFotate are a number of optional arguments that may res
 in improved or more detailed annotations. Some of these are highly recommended for
 most uses of SVAFotate. These options are listed here along with explanations:
 
+**Minimum Overlap Fraction**
 ```
   -f [MINIMUM OVERLAP FRACTION [MINIMUM OVERLAP FRACTION ...]], --minf [MINIMUM OVERLAP FRACTION [MINIMUM OVERLAP FRACTION ...]]
                         A space seperated list of minimum reciprocal overlap fractions required between SVs for each source listed with the `-s` option. If `-s` is not used, only the first minf will be
