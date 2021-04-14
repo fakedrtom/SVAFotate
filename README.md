@@ -201,6 +201,7 @@ the BED file in order to be considered a matching SV. Given the inherent varianc
 breakpoints, it is difficult to presume what the best value for `-f` is, but a minimum of
 0.5 should be a decent starting value to consider.
 
+**Sources to Annotate**
 ```
   -s [SOURCES TO ANNOTATE [SOURCES TO ANNOTATE ...]], --sources [SOURCES TO ANNOTATE [SOURCES TO ANNOTATE ...]]
                         Space seperated list of data sources to use for annotation. If '-s' is not used, all sources available in the source bed file will be used (Example: ' -s CCDG gnomAD ' ).
@@ -215,6 +216,7 @@ is desired, the `-s` parameter will reduce the considered SVs from the BED file 
 belonging to the requested sources. A single source could be selected or any combination of
 included sources from the BED file.
 
+**Extra Annotations**
 ```
   -a [EXTRA ANNOTATIONS [EXTRA ANNOTATIONS ...]], --ann [EXTRA ANNOTATIONS [EXTRA ANNOTATIONS ...]]
                         By default, only the Max_AF, Max_Hets and Max_HomAlt counts, and Max_PopMax_AF are annotated in the output VCF file. `-a` can be used to add additional annotations, with each
@@ -225,11 +227,11 @@ A number of optional annotations are available and can be included using the `-a
 option requires one or more of the following choices which each add more annotations as described
 here:
 
-*all*
+***all***
 
 Adds all of the annotations described by each of the other choices available with `-a`.
 
-*mf*
+***mf***
 
 Adds male and female annotations including:
 
@@ -245,7 +247,7 @@ Max_Female_HomAlt   The maximum Female HomAlt count from all matching SVs across
 If used alongside `best`, `pops` or any of the individual population choices, those annotations
 will also include male and female specific annotations regarding AF and genotype counts.
 
-*best*
+***best***
 
 Adds the "best" match for each data source including in the BED file (or as specified)
 and creates the following annotations:
@@ -262,7 +264,7 @@ The "best" match here is defined by the matching SVs with the highest overlap fr
 product (OFP). Calculating the OFP is straightforward and relies on the genomic size of
 overlapping SVs and the amount of overlap that is shared between them.
 
-*put image here*
+***put image here***
 
 From this example, an overlap fraction is calculated for each SV by dividing the amount
 of overlap by the size of each SV, respectively. Then these fractions are multiplied to
@@ -276,7 +278,7 @@ them (or both a discrepancy in sizes and low overlap).
 If used alongside `mf`, `pops` or any of the individual population choices, "best" annotations
 will also be included for those annotations.
 
-*pops*
+***pops***
 
 The including BED file `SVAFotate_core_SV_popAFs.GRCh38.bed.gz` contains data from gnomAD and
 1000G which both include population specific metrics belonging to the following populations:
@@ -293,7 +295,7 @@ If preferred, individual population designations can be selected instead to add 
 pertaining to that population only. If used alongside `mf` or `best`, male and female or "best"
 annotations will also be added.
 
-*full*
+***full***
 
 Adds all information available for all matches. This will add the following data source specific
 annotations:
@@ -305,7 +307,7 @@ annotations:
 Please note that this annotation will include all information available in the BED file
 for all matching SVs. This is the "kitchen sink" annotation for matches.
 
-*mis*
+***mis***
 
 While matching SVs generally assumes the same SVTYPE. To see if any SVs with a differing SVTYPE
 also overlap with an SV from the input VCF, the `mis` choice is available. This will add
@@ -324,6 +326,7 @@ Best_[data_source]_Mismatch_HomAlt	The HomAlt count of the best mismatch SV_ID f
 Any combination of these choices can be selected, but if `all` is included than all of these
 annotations will be added to the VCF.
 
+**Observed SV Coverage**
 ```
   -c OBSERVED SV COVERAGE, --cov OBSERVED SV COVERAGE
                         Add an annotation reflecting how much of the queried SV genomic space has been previously observed with the same SVTYPE. Uses the data sources listed with -s as the previously
@@ -342,6 +345,7 @@ be added to the given SVs.
 Please note that all overlaps from all given sources in the BED file are considered in this
 calculation provided that the matching SVs share the same SVTYPE.
 
+**Unique SV Regions**
 ```
   -u UNIQUE SV REGIONS, --uniq UNIQUE SV REGIONS
                         Generate a file of unique SV regions called 'unique.bed'. These regions reflect genomic space within the queried SV region that have not been previously observed with the same
@@ -362,6 +366,7 @@ figure illustrates how these regions are determined in a variety of matching SV 
 Additionally, the `-u` option will also add the `SV_Uniq` annotation to the VCF which represents
 the number of unique regions found within a given SV from the input VCF.
 
+**SV Size Limit**
 ```
   -l SV SIZE LIMIT, --lim SV SIZE LIMIT
                         Only include previously observed SVs from data sources with a size less than or equal to this value (only available when using --cov or --uniq).
@@ -377,6 +382,7 @@ very large and rare deletion from CCDG would show observed SV coverage of 1.0 an
 unique SV regions regardless of other more precise and potentially more meaningful matches.
 By including an SV size limit alongside the `-c` or `-u` options, such scenarios can be avoided.
 
+**Targets BED File**
 ```
   -t TARGETS BED FILE, --target TARGETS BED FILE
                         Path to target regions BED file. Expected format is a tab delimited file listing CHROM START END ID where ID is a genomic region identifier that will be listed as an annotation
@@ -393,6 +399,7 @@ used when the `-u` option has also been invoked, then the resulting `unique.bed`
 regions and the regions provided by the `-t` option. This column will be populated with the
 region identifier found in the BED file used with the `-t` option.
 
+**Use CI Boundaries**
 ```
   -ci USE CI BOUNDARIES, --ci USE CI BOUNDARIES
                         Expects CIPOS and CIEND to be included in the INFO field of the input VCF (--vcf). If argument is selected, use 'inner' or 'outer' confidence intervals (CIPOS, CIEND) for SV
@@ -408,6 +415,7 @@ options may be used. If CIPOS and CIEND or CIPOS95 and CIEND95 are not present i
 for a given SV in the input VCF these options will not work. Please be sure to consider the adjustments
 to SV genomic coordinates when using the `-f` option for requiring reciprocal overlaps.
 
+**Change SV Size**
 ```
   -e EMBIGGEN THE SV SIZE, --emb EMBIGGEN THE SV SIZE
                         Increase the size of the SV coordinates in the input VCF (--vcf) by a single integer; Subtract that value from the start and add it to the end of each set of coordinates.
@@ -420,6 +428,7 @@ input VCF. The genomic space corresponding to a reported SV may be enlarged usin
 `-e` option or reduced using the `-r` option. Please be sure to consider the adjustments to SV
 genomic coordinates when using the `-f` option for requiring reciprocal overlaps.
 
+**CPU Count**
 ```
   --cpu CPU Count       The number of cpus to use for multi-threading (Default = 1).
 ```
@@ -427,8 +436,8 @@ genomic coordinates when using the `-f` option for requiring reciprocal overlaps
 SVAFotate may use additional cpus for multi-threading purposes which can be designated using
 the `--cpu` option.
 
-**pickle-source**
-
+pickle-source
+------------------------
 Since SVAFotate may be used repeatedly on different SV VCFs with the same BED file, it
 may be advantageous to create a pickle object of the BED file to improve SVAFotate's
 performance when running the `annotate` subcommand. This is optional. If SVAFotate or
@@ -440,7 +449,8 @@ of a BED file is straightforward and can be accomplished with the following comm
 svafotate pickle-source --bed SVAFotate_core_SV_popAFs.GRCh38.bed.gz --out SVAFotate_core_SV_popAFs.GRCh38.pickle
 ```
 
-**custom-annotation**
+custom-annotation
+-----------------------
 
 This is not currently used, but is a placeholder for potential
 future developments.
