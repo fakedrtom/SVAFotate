@@ -22,7 +22,7 @@ to AF metrics.
 ## Quick Links
 [**Installation**](https://github.com/fakedrtom/SVAFotate#installation)<br>
 [**Usage**](https://github.com/fakedrtom/SVAFotate#usage)<br>
-[annotate](https://github.com/fakedrtom/SVAFotate#annotate)<br>
+  *  [annotate](https://github.com/fakedrtom/SVAFotate#annotate)<br>
 
 [custom-annotation](https://github.com/fakedrtom/SVAFotate#custom-annotation)<br>
 
@@ -208,7 +208,7 @@ the BED file in order to be considered a matching SV. Given the inherent varianc
 breakpoints, it is difficult to presume what the best value for `-f` is, but a minimum of
 0.5 should be a decent starting value to consider.
 
-**Sources to Annotate**
+#### Sources to Annotate
 ```
   -s [SOURCES TO ANNOTATE [SOURCES TO ANNOTATE ...]], --sources [SOURCES TO ANNOTATE [SOURCES TO ANNOTATE ...]]
                         Space seperated list of data sources to use for annotation. If '-s' is not used, all sources available in the source bed file will be used (Example: ' -s CCDG gnomAD ' ).
@@ -223,7 +223,7 @@ is desired, the `-s` parameter will reduce the considered SVs from the BED file 
 belonging to the requested sources. A single source could be selected or any combination of
 included sources from the BED file.
 
-**Extra Annotations**
+#### Extra Annotations
 ```
   -a [EXTRA ANNOTATIONS [EXTRA ANNOTATIONS ...]], --ann [EXTRA ANNOTATIONS [EXTRA ANNOTATIONS ...]]
                         By default, only the Max_AF, Max_Hets and Max_HomAlt counts, and Max_PopMax_AF are annotated in the output VCF file. `-a` can be used to add additional annotations, with each
@@ -334,7 +334,7 @@ Best_[data_source]_Mismatch_HomAlt	The HomAlt count of the best mismatch SV_ID f
 Any combination of these choices can be selected, but if `all` is included than all of these
 annotations will be added to the VCF.
 
-**Observed SV Coverage**
+#### Observed SV Coverage
 ```
   -c OBSERVED SV COVERAGE, --cov OBSERVED SV COVERAGE
                         Add an annotation reflecting how much of the queried SV genomic space has been previously observed with the same SVTYPE. Uses the data sources listed with -s as the previously
@@ -353,7 +353,7 @@ be added to the given SVs.
 Please note that all overlaps from all given sources in the BED file are considered in this
 calculation provided that the matching SVs share the same SVTYPE.
 
-**Unique SV Regions**
+#### Unique SV Regions
 ```
   -u UNIQUE SV REGIONS, --uniq UNIQUE SV REGIONS
                         Generate a file of unique SV regions called 'unique.bed'. These regions reflect genomic space within the queried SV region that have not been previously observed with the same
@@ -374,7 +374,7 @@ figure illustrates how these regions are determined in a variety of matching SV 
 Additionally, the `-u` option will also add the `SV_Uniq` annotation to the VCF which represents
 the number of unique regions found within a given SV from the input VCF.
 
-**SV Size Limit**
+#### SV Size Limit
 ```
   -l SV SIZE LIMIT, --lim SV SIZE LIMIT
                         Only include previously observed SVs from data sources with a size less than or equal to this value (only available when using --cov or --uniq).
@@ -390,7 +390,7 @@ very large and rare deletion from CCDG would show observed SV coverage of 1.0 an
 unique SV regions regardless of other more precise and potentially more meaningful matches.
 By including an SV size limit alongside the `-c` or `-u` options, such scenarios can be avoided.
 
-**Targets BED File**
+#### Targets BED File
 ```
   -t TARGETS BED FILE, --target TARGETS BED FILE
                         Path to target regions BED file. Expected format is a tab delimited file listing CHROM START END ID where ID is a genomic region identifier that will be listed as an annotation
@@ -407,7 +407,7 @@ used when the `-u` option has also been invoked, then the resulting `unique.bed`
 regions and the regions provided by the `-t` option. This column will be populated with the
 region identifier found in the BED file used with the `-t` option.
 
-**Use CI Boundaries**
+#### Use CI Boundaries
 ```
   -ci USE CI BOUNDARIES, --ci USE CI BOUNDARIES
                         Expects CIPOS and CIEND to be included in the INFO field of the input VCF (--vcf). If argument is selected, use 'inner' or 'outer' confidence intervals (CIPOS, CIEND) for SV
@@ -423,7 +423,7 @@ options may be used. If CIPOS and CIEND or CIPOS95 and CIEND95 are not present i
 for a given SV in the input VCF these options will not work. Please be sure to consider the adjustments
 to SV genomic coordinates when using the `-f` option for requiring reciprocal overlaps.
 
-**Change SV Size**
+#### Change SV Size
 ```
   -e EMBIGGEN THE SV SIZE, --emb EMBIGGEN THE SV SIZE
                         Increase the size of the SV coordinates in the input VCF (--vcf) by a single integer; Subtract that value from the start and add it to the end of each set of coordinates.
@@ -436,7 +436,7 @@ input VCF. The genomic space corresponding to a reported SV may be enlarged usin
 `-e` option or reduced using the `-r` option. Please be sure to consider the adjustments to SV
 genomic coordinates when using the `-f` option for requiring reciprocal overlaps.
 
-**CPU Count**
+#### CPU Count
 ```
   --cpu CPU Count       The number of cpus to use for multi-threading (Default = 1).
 ```
