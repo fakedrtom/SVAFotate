@@ -20,7 +20,10 @@ is a command-line tool and provides a variety of annotation options related
 to AF metrics.
 
 ## Quick Links
-[Installation](https://github.com/fakedrtom/SVAFotate#installation)<br>
+[**Installation**](https://github.com/fakedrtom/SVAFotate#installation)<br>
+[**Usage**](https://github.com/fakedrtom/SVAFotate#usage)<br>
+[annotate](https://github.com/fakedrtom/SVAFotate#annotate)<br>
+
 [custom-annotation](https://github.com/fakedrtom/SVAFotate#custom-annotation)<br>
 
 Installation
@@ -185,7 +188,7 @@ Beyond the defaults of SVAFotate are a number of optional arguments that may res
 in improved or more detailed annotations. Some of these are highly recommended for
 most uses of SVAFotate. These options are listed here along with explanations:
 
-**Minimum Overlap Fraction**
+#### Minimum Overlap Fraction
 ```
   -f [MINIMUM OVERLAP FRACTION [MINIMUM OVERLAP FRACTION ...]], --minf [MINIMUM OVERLAP FRACTION [MINIMUM OVERLAP FRACTION ...]]
                         A space seperated list of minimum reciprocal overlap fractions required between SVs for each source listed with the `-s` option. If `-s` is not used, only the first minf will be
