@@ -22,9 +22,20 @@ to AF metrics.
 ## Quick Links
 [**Installation**](https://github.com/fakedrtom/SVAFotate#installation)<br>
 [**Usage**](https://github.com/fakedrtom/SVAFotate#usage)<br>
-  *  [annotate](https://github.com/fakedrtom/SVAFotate#annotate)<br>
-
-[custom-annotation](https://github.com/fakedrtom/SVAFotate#custom-annotation)<br>
+  * [**annotate**](https://github.com/fakedrtom/SVAFotate#annotate)<br>
+    * [Minimum Overlap Fraction](https://github.com/fakedrtom/SVAFotate#minimum-overlap-fraction)<br>
+    * [Sources to Annotate](https://github.com/fakedrtom/SVAFotate#sources-to-annotate)<br>
+    * [Extra Annotations](https://github.com/fakedrtom/SVAFotate#extra-annotations)<br>
+    * [Observed SV Coverage](https://github.com/fakedrtom/SVAFotate#observed-sv-coverage)<br>
+    * [Unique SV Regions](https://github.com/fakedrtom/SVAFotate#unique-sv-regions)<br>
+    * [SV Size Limit](https://github.com/fakedrtom/SVAFotate#sv-size-limit)<br>
+    * [Targets BED File](https://github.com/fakedrtom/SVAFotate#targets-bed-file)<br>
+    * [Use CI boundaries](https://github.com/fakedrtom/SVAFotate#use-ci-boundaries)<br>
+    * [Change SV Size](https://github.com/fakedrtom/SVAFotate#change-sv-size)<br>
+    * [CPU Count](https://github.com/fakedrtom/SVAFotate#cpu-count)<br>
+  * [**pickle-source**](https://github.com/fakedrtom/SVAFotate#pickle-source)<br>  
+  * [**custom-annotation**](https://github.com/fakedrtom/SVAFotate#custom-annotation)<br>
+[**Acknowledgements**](https://github.com/fakedrtom/SVAFotate#acknowledgements)<br>
 
 Installation
 ========================
