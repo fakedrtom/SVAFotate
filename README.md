@@ -34,7 +34,7 @@ to AF metrics.
     * [Change SV Size](https://github.com/fakedrtom/SVAFotate#change-sv-size)<br>
     * [CPU Count](https://github.com/fakedrtom/SVAFotate#cpu-count)<br>
   * [**pickle-source**](https://github.com/fakedrtom/SVAFotate#pickle-source)<br>  
-  * [**custom-annotation**](https://github.com/fakedrtom/SVAFotate#custom-annotation)<br>
+  * [**custom-annotation**](https://github.com/fakedrtom/SVAFotate#custom-annotation)<br><br>
 [**Acknowledgements**](https://github.com/fakedrtom/SVAFotate#acknowledgements)<br>
 
 Installation
