@@ -264,7 +264,7 @@ The "best" match here is defined by the matching SVs with the highest overlap fr
 product (OFP). Calculating the OFP is straightforward and relies on the genomic size of
 overlapping SVs and the amount of overlap that is shared between them.
 
-***put image here***
+![calculating_ofp](https://github.com/fakedrtom/SVAFotate/blob/master/images/calculating_ofp.png)
 
 From this example, an overlap fraction is calculated for each SV by dividing the amount
 of overlap by the size of each SV, respectively. Then these fractions are multiplied to
@@ -273,7 +273,7 @@ both their genomic sizes and the amount of overlap they share. Low OFP scores su
 disparity in genomic sizes between matching SVs or a low amount of shared overlap between
 them (or both a discrepancy in sizes and low overlap).
 
-*put other image here*
+![ofp](https://github.com/fakedrtom/SVAFotate/blob/master/images/ofp_range.png)
 
 If used alongside `mf`, `pops` or any of the individual population choices, "best" annotations
 will also be included for those annotations.
