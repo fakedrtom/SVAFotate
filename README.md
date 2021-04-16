@@ -142,15 +142,15 @@ and HOM_ALT genotype counts, where available), were parsed from these into a sin
 file. CCDG and 1000G data were provided with GRCh38 alignments, but gnomAD data
 was generated using GRCh37 alignments. These have been converted to GRCh38 using
 [UCSC's command-line liftover tool](https://genome.ucsc.edu/cgi-bin/hgLiftOver). A
-different BED file could be used or customized data could be added to the provided
-BED file, but please note that SVAFotate expects specific columns, their header
+different BED file could be used or customized, user-specific data could be added to the
+provided BED file, but please note that SVAFotate expects specific columns, their header
 names, and their order placement to be present in the BED file. If a different BED
 file is used or additional data is added to the provided BED, please ensure that
 it follows the same ordering and column information as found in `SVAFotate_core_SV_popAFs.GRCh38.bed.gz`.
-Please note that all columns do *not* need to be populated with actual data and where
-data is unavailable an 'NA' is recommended. As a minimum, it is necessary that any
-other BED file used or other data added to this provided BED file include: CHROM,
-START, END, SVLEN, SVTYPE, SOURCE, SV_ID, and AF.
+As a minimum, it is necessary that any other BED file used or other data added to this provided
+BED file include: CHROM, START, END, SVLEN, SVTYPE, SOURCE, SV_ID, and AF. 
+Please note that all other columns do *not* need to be populated with actual data and where
+data is unavailable an 'NA' is recommended.
 
 A serialized pickle object of the BED file can be used in place of the BED file (`-p`).
 This may result in faster performance when using the SVAFotate `annotate` subcommand.
@@ -195,6 +195,21 @@ case they likely would be added given the wide disparity between AFs in all matc
 Also by default an annotation reflecting the number of matches per data source in the
 BED file is also added. For example, if CCDG is one of the data sources in the input
 BED file, then `CCDG_Count` is added and lists the number of CCDG matching SVs. 
+
+##### A note on matching more complex SVs
+As previously mentioned, matching SVs are defined as an SV from the input VCF that shares
+an overlap of genomic coordinates with an SV in the BED file, provided that these SVs share
+the same SVTYPE. This is fairly straightforward for many SVTYPES, such as, DELs, DUPs,
+and INVs. This matching scheme can be more complicted for other SVTYPEs. Insertions
+(INSs) for example are often reported as a single basepair (or 2bp) genomic coordinate
+with an accompanying SVLEN that reflects the size of the insertion. INSs are still matched
+based on overlapping coordinates, which generally means that INSs only match when their
+coordinates are (nearly) the same. Reported SVLENs for INSs are then used if certain options (such as
+`-f` or `-a best`) or requested to better refine the matching INSs. Other even more complex
+SVTYPES may require more specialized attention. In some of these cases, it may be helpful to
+include the `-a mis` parameter which would add annotations regarding overlapping SVs that
+have different SVTYPEs. For more information please see the [Extra Annotations](https://github.com/fakedrtom/SVAFotate#extra-annotations)
+section.
 
 Beyond the defaults of SVAFotate are a number of optional arguments that may result
 in improved or more detailed annotations. Some of these are highly recommended for
