@@ -1,8 +1,9 @@
 SVAFotate
 =========================
 
-SVAFotate is currently undergoing some major updates that are under 
-construction. Please check back soon.
+Structural Variant Allele Frequency annotate or SVAFotate is a tool for
+annotating structural variant VCFs with population level allele frequency
+information and other related metrics.
 
 Overview
 =========================
@@ -18,6 +19,9 @@ can be used for different filtering schemes or other analyses. SVAFotate
 is a command-line tool and provides a variety of annotation options related
 to AF metrics.
 
+# Quick Links
+[Installation](https://github.com/fakedrtom/SVAFotate#installation)
+[custom-annotation](https://github.com/fakedrtom/SVAFotate#custom-annotation)
 
 Installation
 ========================
@@ -268,10 +272,11 @@ overlapping SVs and the amount of overlap that is shared between them.
 
 From this example, an overlap fraction is calculated for each SV by dividing the amount
 of overlap by the size of each SV, respectively. Then these fractions are multiplied to
-create the OFP. High OFP scores reflect matching SVs that are more identical in terms of
-both their genomic sizes and the amount of overlap they share. Low OFP scores suggest a
-disparity in genomic sizes between matching SVs or a low amount of shared overlap between
-them (or both a discrepancy in sizes and low overlap).
+create the OFP which will range between 0.0 and 1.0. As illustrated below, high OFP scores
+reflect matching SVs that are more identical in terms of both their genomic sizes and the
+amount of overlap they share while low OFP scores suggest a disparity in genomic sizes
+between matching SVs or a low amount of shared overlap between them (or both a discrepancy
+in sizes and low overlap).
 
 ![ofp](https://github.com/fakedrtom/SVAFotate/blob/master/images/ofp_range.png)
 
