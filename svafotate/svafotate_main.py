@@ -940,10 +940,9 @@ def annotate(parser,args):
                     subdf = subtracted.as_df()
                     for i,row in subdf.iterrows():
                         sv_id = row.SV_ID
-                        coord = "{}:{}-{}".format(row.Chromosome, row.Start, row.End)
                         if sv_id not in uniqs:
                             uniqs[sv_id] = []
-                        uniqs[sv_id].append(coord)
+                        uniqs[sv_id].append([row.Chromosome, row.Start, row.End])
                             
     ## Create and output to uniques.bed
     ## if -u option invoked
@@ -972,11 +971,9 @@ def annotate(parser,args):
                     nuniqs[sv_id] = len(uniqs[sv_id])
             if len(uniqs[sv_id]) > 0:
                 for i in uniqs[sv_id]:
-                    j = i.split(':')
-                    chrom = j[0]
-                    coords = j[1].split('-')
-                    start = coords[0]
-                    end = coords[1]
+                    chrom = i[0]
+                    start = i[1]
+                    end = i[2]
                     out = [str(chrom),str(start),str(end),str(svtypes[sv_id]),str(sv_id),het_samples[sv_id],homalt_samples[sv_id]]
                     output[sv_id].extend(out)
                     variables = [chrom,start,end,sv_id]
