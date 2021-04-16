@@ -19,9 +19,9 @@ can be used for different filtering schemes or other analyses. SVAFotate
 is a command-line tool and provides a variety of annotation options related
 to AF metrics.
 
-# Quick Links
-[Installation](https://github.com/fakedrtom/SVAFotate#installation)
-[custom-annotation](https://github.com/fakedrtom/SVAFotate#custom-annotation)
+## Quick Links
+[Installation](https://github.com/fakedrtom/SVAFotate#installation)<br>
+[custom-annotation](https://github.com/fakedrtom/SVAFotate#custom-annotation)<br>
 
 Installation
 ========================
