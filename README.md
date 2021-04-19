@@ -288,6 +288,7 @@ and creates the following annotations:
 
 ```
 Best_[data_source]_ID		The SV_ID of the best matching SV for that data source
+Best_[data_source]_OFP		The OFP of the best matching SV for that data source
 Best_[data_source]_AF	    	The AF from the best SV_ID for that data source
 Best_[data_source]_Het    	The Het count from the best SV_ID for that data source
 Best_[data_source]_HomAlt 	The HomAlt count from the best SV_ID for that data source
@@ -353,6 +354,7 @@ the following annotations:
 [data_source]_Mismatches_Count		The number of overlapping SVs from the data source with different SVTYPEs
 [data_source]_Mismatch_SVTYPEs		Comma-separated list of the other overlapping SVTYPEs from the data source
 Best_[data_source]_Mismatch_ID		The SV_ID of the best overlapping SV with different SVTYPE from the data source
+Best_[data_source]_Mismatch_OFP		The OFP of the best overlapping SV with different SVTYPE from the data source
 Best_[data_source]_Mismatch_SVTYPE	The SVTYPE of the best mismatch SV_ID from the data source
 Best_[data_source]_Mismatch_AF		The AF of the best mismatch SV_ID from the data source 
 Best_[data_source]_Mismatch_Het		The Het count of the best mismatch SV_ID from the data source 
