@@ -128,8 +128,9 @@ been tested on VCFs created by other SV callers. As long as SVTYPE and END
 (preferably SVLEN as well) are included in the INFO fields, any SV VCF that
 follows expected VCF conventions should be usable with SVAFotate.
 
-SVAFotate also requires a BED file corresponding to population SV data (`-b`). A
-BED file is provided along with SVAFotate, called:
+SVAFotate also requires a BED file corresponding to population SV data (`-b`) that you
+wish to compare the SVs in the input VCF against. A BED file with currently available
+large population SV data is provided along with SVAFotate, called:
 
 ```
 SVAFotate_core_SV_popAFs.GRCh38.bed.gz
@@ -167,9 +168,13 @@ svafotate annotate -v in.vcf.gz -o out.vcf -b SVAFotate_core_SV_popAFs.GRCh38.be
 The `annotate` subcommand considers each SV in the VCF input individually and identifies
 all matching SVs from the BED file. **Matching SVs are defined as SVs from the input VCF
 that share overlapping genomic coordinates with SVs provided in the BED file and that are
-described as having the same SVTYPE**. It then assesses individual metrics from each matching
-SV and creates new annotations for each SV from the input VCF. By default, SVAFotate will add
-the following annotations to the INFO field of the input VCF:
+described as having the same SVTYPE**. Under default settings even a single basepair overlap
+can qualify as a matching SV which may result in many matches being rather imprecise (and also
+an overabundance of matches). There are options to require more stringent overlap requirements
+to help avoid this (please see [Minimum Overlap Fraction](https://github.com/fakedrtom/SVAFotate#minimum-overlap-fraction)
+). Once SVAFotate collects all matching SVs, it assesses individual metrics from each matching
+SV and creates new population AF related annotations for each SV from the input VCF. By
+default, SVAFotate will add the following annotations to the INFO field of the input VCF:
 
 ```
 Max_AF		 The maximum AF from all matching SVs across all specified data sources found in the provided BED file
@@ -204,15 +209,16 @@ As previously mentioned, matching SVs are defined as an SV from the input VCF th
 an overlap of genomic coordinates with an SV in the BED file, provided that these SVs share
 the same SVTYPE. This is fairly straightforward for many SVTYPES, such as, DELs, DUPs,
 and INVs. This matching scheme can be more complicted for other SVTYPEs. Insertions
-(INSs) for example are often reported as a single basepair (or 2bp) genomic coordinate
+(INSs), for example, are often reported as a single basepair (or 2bp) genomic coordinate
 with an accompanying SVLEN that reflects the size of the insertion. INSs are still matched
 based on overlapping coordinates, which generally means that INSs from the input VCF only match
-when their coordinates are (nearly) the same as those in the BED file. Reported SVLENs for INSs
-are then used if certain options (such as `-f` or `-a best`) are requested to better refine
-the matching INSs. Other even more complex SVTYPES may require more specialized attention.
-In some of these cases, it may be helpful to include the `-a mis` parameter which would add
-annotations regarding overlapping SVs that have different SVTYPEs. For more information please
-see the [Extra Annotations](https://github.com/fakedrtom/SVAFotate#extra-annotations) section.
+when their coordinates are (nearly) the same as those in the BED file (even if SVLENs differ).
+Reported SVLENs for INSs are then used if certain options (such as `-f` or `-a best`) are
+requested to better refine the matching INSs. Other even more complex SVTYPES may require more
+specialized attention. In some of these cases, it may be helpful to include the `-a mis`
+parameter which would add annotations regarding overlapping SVs that have different SVTYPEs.
+For more information please see the [Extra Annotations](https://github.com/fakedrtom/SVAFotate#extra-annotations)
+section.
 
 There are many additional options beyond the defaults of SVAFotate that may result
 in improved or more detailed annotations. Some of these are highly recommended for
@@ -234,10 +240,10 @@ higher the value of `-f`, the more exact the overlapping match between SVs must 
 likely the more precise and limited the number of overlapping matches will be). For example,
 a `-f` value of 0.9 would require that 90% of the genomic region belonging to an SV from
 the input VCF must overlap with at least 90% of the genomic region belonging to an SV in
-the BED file in order to be considered a matching SV. If this requirement is not met, the SV
-from the BED file will not be added as a matching SV. Given the inherent variance of SV
-breakpoints, it is difficult to presume what the best value for `-f` is, but a minimum of
-0.5 should be a decent starting value to consider.
+the BED file in order to be considered a matching SV (provided they have the same SVTYPE).
+If this requirement is not met, the SV from the BED file will not be added as a matching SV.
+Given the inherent variance of SV breakpoints, it is difficult to presume what the best value
+for `-f` is, but a minimum of 0.5 should be a decent starting value to consider.
 
 #### Sources to Annotate
 ```
@@ -248,7 +254,7 @@ breakpoints, it is difficult to presume what the best value for `-f` is, but a m
 The required BED file for running the `annotate` subcommand may contain SV data from multiple
 datasets. The `SOURCE` column in this BED file refers to the data source for the given SVs. For
 example, the supplied `SVAFotate_core_SV_popAFs.GRCh38.bed.gz` file contains SVs from the CCDG,
-gnomAD, and 1000G sources. By default SVAFotate will consider all SVs in the BED file for
+gnomAD, and 1000G dataset sources. By default SVAFotate will consider all SVs in the BED file for
 determining potential matches (and can report metrics specifc to each source). If annotations
 based on comparisons with select sources only is desired, the `-s` parameter will reduce the
 considered SVs from the BED file to only those belonging to the requested sources. A single
@@ -307,8 +313,8 @@ overlapping SVs and the amount of overlap that is shared between them.
 
 From this example, an overlap fraction is calculated for each SV by dividing the amount
 of overlap by the size of each SV, respectively. Then these fractions are multiplied to
-create the OFP which will range between 0.0 and 1.0. If used in combination with the `-f`
-option, OFP scores may be more resticted to certain ranges. As illustrated below, high OFP scores
+create the OFP which will range between 0.0 and 1.0. By using the `-f` option, OFP scores
+will be more resticted to certain ranges. As illustrated below, high OFP scores
 reflect matching SVs that are more identical in terms of both their genomic sizes and the
 amount of overlap they share while low OFP scores suggest a disparity in genomic sizes
 between matching SVs or a low amount of shared overlap between them (or both a discrepancy
@@ -346,8 +352,10 @@ annotations:
 ```
 
 Please note that this annotation will include all information available in the BED file
-for all matching SVs. This is the "kitchen sink" annotation for matches and will add a very
-lengthy annotation to the INFO field.
+for all matching SVs. This is the "kitchen sink" annotation for matches and will potentially
+add very lengthy annotations to the INFO field. For example, if an SV from the input
+VCF is found to have 4 matches with SVs from the gnomAD dataset, all information from
+the BED file for all 4 of those matches will be listed.
 
 ***mis***
 
@@ -416,7 +424,7 @@ figure illustrates how these regions are determined in a variety of matching SV 
 Additionally, the `-u` option will also add the `SV_Uniq` annotation to the VCF which represents
 the number of unique regions found within a given SV from the input VCF. Similar to the `-c`
 option, unique regions do not consider restrictions from the `-f` option and this parameter
-also expects a minimum AF value to be provided that can restict the inclusion of SVs in the BED
+also expects a minimum AF value to be provided that can restict the inclusion of SVs from the BED
 file.
 
 #### SV Size Limit
@@ -465,7 +473,7 @@ region identifier found in the BED file used with the `-t` option.
 Lumpy and other SV callers may generate confidence interval metrics for predicted SV breakpoints. To
 use these confidence intervals instead of the given START and END coordinates, the `-ci` or `-ci95`
 options may be used. There are two choices for each of these parameters: `in` and `out`. The `in` choice
-will use the CIPOS and CIEND (or CIPOS95 and CIEND95) that will result in a smaller SV whil the `out`
+will use the CIPOS and CIEND (or CIPOS95 and CIEND95) that will result in a smaller SV while the `out`
 choice will use the intervals resulting in a larger SV. If CIPOS and CIEND or CIPOS95 and CIEND95 are
 not present in the INFO field for a given SV in the input VCF these options will not work. Please be
 sure to consider the adjustments to SV genomic coordinates when using the `-f` option for requiring
