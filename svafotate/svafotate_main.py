@@ -325,7 +325,7 @@ def reciprocal_overlap(my_dict,source,minfs,svtypes):
     return(pass_filter)
 
                 
-def get_best(my_dict,source,datas):
+def get_best(my_dict,source,datas,ofps):
     ## determines "best" overlap via product of fraction and fraction_b
     ## whichever overlap has highest fraction product is returned
     ## in the event that multiple IDs are found to be "best"
@@ -334,19 +334,27 @@ def get_best(my_dict,source,datas):
     ## if tie still persists, returns the first ID
 
     best = defaultdict(list)
-    final = defaultdict(list)
+    #final = defaultdict(list)
+    if source not in ofps:
+        ofps[source] = {}
 
     for sv_id in my_dict:
 
         ids = []
         fracts = []
+        if sv_id not in ofps[source]:
+            ofps[source][sv_id] = {}
+
         for i in range(len(my_dict[sv_id]["Overlap"])):
             sv_id2 = my_dict[sv_id]["SV_ID_b"][i]
             ids.append(sv_id2)
+            if sv_id2 not in ofps[source][sv_id]:
+                ofps[source][sv_id][sv_id2] = []
             fract1 = my_dict[sv_id]["Fraction"][i]
             fract2 = my_dict[sv_id]["Fraction_b"][i]
             prod_fract = fract1 * fract2
             fracts.append(prod_fract)
+            ofps[source][sv_id][sv_id2].append(prod_fract)
             
         maxf = max(fracts)
         indices = [i for i, x in enumerate(fracts) if x == maxf]
@@ -701,6 +709,7 @@ def annotate(parser,args):
         ## add best annotations
         if "best" in extras or "all" in extras:
             vcf.add_info_to_header({"ID": "Best_" + source + "_ID", "Description": "The " + source + " ID of the best matching SV", "Type": "String", "Number": "1"})
+            vcf.add_info_to_header({"ID": "Best_" + source + "_OFP", "Description": "The " + source + " OFP of the best matching SV", "Type": "Float", "Number": "1"})
             vcf.add_info_to_header({"ID": "Best_" + source + "_AF", "Description": "The best AF match for " + str(source), "Type": "Float", "Number": "1"})
             vcf.add_info_to_header({"ID": "Best_" + source + "_Het", "Description": "The best Het count match for " + str(source), "Type": "Integer", "Number": "1"})
             vcf.add_info_to_header({"ID": "Best_" + source + "_HomAlt", "Description": "The best HomAlt count match for " + str(source), "Type": "Integer", "Number": "1"})
@@ -752,6 +761,7 @@ def annotate(parser,args):
             vcf.add_info_to_header({"ID": source + "_Mismatches_Count", "Description": "The number of  " + source + " overlapping SVs with different SVTYPEs", "Type": "Integer", "Number": "1"})
             vcf.add_info_to_header({"ID": source + "_Mismatch_SVTYPEs", "Description": "Comma-separated list of the other overlapping SVTYPEs for ", "Type": "String", "Number": "."})
             vcf.add_info_to_header({"ID": "Best_" + source + "_Mismatch_ID", "Description": "The " + source + " ID of the best overlapping SV with different SVTYPE", "Type": "String", "Number": "1"})
+            vcf.add_info_to_header({"ID": "Best_" + source + "_Mismatch_OFP", "Description": "The " + source + " OFP of the best overlapping SV with different SVTYPE", "Type": "String", "Number": "1"})
             vcf.add_info_to_header({"ID": "Best_" + source + "_Mismatch_SVTYPE", "Description": "The " + source + " SVTYPE of the best overlapping SV with different SVTYPE", "Type": "String", "Number": "1"})
             vcf.add_info_to_header({"ID": "Best_" + source + "_Mismatch_AF", "Description": "The " + source + " AF for the best overlapping SV with different SVTYPE", "Type": "Float", "Number": "1"})
             vcf.add_info_to_header({"ID": "Best_" + source + "_Mismatch_Het", "Description": "The " + source + " Het count for the best overlapping SV with different SVTYPE", "Type": "Integer", "Number": "1"})
@@ -805,6 +815,7 @@ def annotate(parser,args):
     join_best_matches = defaultdict(lambda: defaultdict(list))
     join_mismatches = defaultdict(lambda: defaultdict(list))
     join_best_mismatches = defaultdict(lambda: defaultdict(list))
+    OFPs = defaultdict(lambda: defaultdict(list))
 
     for source in req_sources:
         print("\nRunning pyranges.join for:")
@@ -838,7 +849,7 @@ def annotate(parser,args):
                 join_matches[source][sv_id].extend(filtered_matches_ids[sv_id])
 
             ## create SVTYPE best match dict
-            best_matches_ids = get_best(filtered_matches,source,datas)
+            best_matches_ids = get_best(filtered_matches,source,datas,OFPs)
             for sv_id in best_matches_ids:
                 join_best_matches[source][sv_id].extend(best_matches_ids[sv_id])
 
@@ -855,7 +866,7 @@ def annotate(parser,args):
                 join_mismatches[source][sv_id].extend(filtered_mismatches_ids[sv_id])
 
             ## create SVTYPE best mismatch dict
-            best_mismatches_ids = get_best(filtered_mismatches,source,datas)
+            best_mismatches_ids = get_best(filtered_mismatches,source,datas,OFPs)
             for sv_id in best_mismatches_ids:
                 join_best_mismatches[source][sv_id].extend(best_mismatches_ids[sv_id])
 
@@ -1072,6 +1083,8 @@ def annotate(parser,args):
                 if sv_id in join_best_matches[source]:
                     annoID = "Best_" + source + "_ID"
                     v.INFO[annoID] = join_best_matches[source][sv_id][0]
+                    ofpID = "Best_" + source + "_OFP"
+                    v.INFO[ofpID] = OFPs[source][sv_id][join_best_matches[source][sv_id][0]][0]
                     write_best_values(source,sv_id,join_best_matches,["AF","Het","HomAlt","PopMax_AF"],datas,header_cols,v)
 
                     ## write best male female annotations 
@@ -1122,6 +1135,7 @@ def annotate(parser,args):
                     mismatch_svtypes = get_feature(source,join_mismatches[source][sv_id],header_cols["SVTYPE"],datas)
                     v.INFO[source + "_Mismatch_SVTYPEs"] = ",".join(sorted(list(set(mismatch_svtypes))))
                     v.INFO["Best_" + source + "_Mismatch_ID"] = join_best_mismatches[source][sv_id][0]
+                    v.INFO["Best_" + source + "_Mismatch_OFP"] = OFPs[source][sv_id][join_best_mismatches[source][sv_id][0]][0]
                     mismatch_svtype = get_feature(source,join_best_mismatches[source][sv_id],header_cols["SVTYPE"],datas)
                     v.INFO["Best_" + source + "_Mismatch_SVTYPE"] = mismatch_svtype[0]
                     mismatch_AF = get_feature(source,join_best_mismatches[source][sv_id],header_cols["AF"],datas)
