@@ -85,6 +85,7 @@ def add_annotation(parser):
     opt.add_argument('-c', '--cov',
                     metavar='OBSERVED SV COVERAGE',
                     type=float,
+                    default = -999,
                     help=("Add an annotation reflecting how much of the queried SV genomic space has been previously observed with the same SVTYPE."
                           " Uses the data sources listed with -s as the previously observed SVs."
                           " Please provide minimum AF to exclude all SVs from data sources with a total AF below that value (must be between 0 and 1.0).")
@@ -93,6 +94,7 @@ def add_annotation(parser):
     opt.add_argument('-u', '--uniq',
                     metavar='UNIQUE SV REGIONS',
                     type=float,
+                    default = -999,
                     help=("Generate a file of unique SV regions called 'unique.bed'."
                           " These regions reflect genomic space within the queried SV region that have not been previously observed with the same SVTYPE."
                           " This will also add an annotation regarding the number of unique regions within a given SV."
@@ -443,8 +445,18 @@ def annotate(parser,args):
         minf = [float(0.001)]
         print("\nNo reciprocal overlap fraction indicated; using default 0.001")
 
+    ## set up check_cov and check_uniq
+    check_cov = True if args.cov != -999 else False
+    if check_cov:
+        if args.cov < 0 or args.cov > 1:
+            raise NameError("AF cutoff entered is invalid; please make sure that the value entered with --cov is greater than or equal to 0 and less than 1")
+    check_uniq = True if args.uniq != -999 else False
+    if check_uniq:
+        if args.uniq < 0 or args.uniq > 1:
+            raise NameError("AF cutoff entered is invalid; please make sure that the value entered with --uniq is greater than or equal to 0 and less than 1")
+
     ## check that --lim is only used when --cov or --uniq is also used
-    if args.lim is not None and args.cov is None and args.uniq is None:
+    if args.lim is not None and check_cov is None and check_uniq is None:
         raise NameError("\nThe argument --lim must be used alongside --cov or --uniq; please include either --cov or --uniq")
 
     ## local vars
@@ -454,12 +466,18 @@ def annotate(parser,args):
     bed_headers = []
     cov_lists = {}
     covAF = float(0)
-    if args.cov:
+
+    if check_cov:
+        minc = args.cov
         covAF = args.cov
+
     uniq_lists = {}
     uniqAF = float(0)
-    if args.uniq:
+
+    if check_uniq:
+        minu = args.uniq
         uniqAF = args.uniq
+
     size_limit = 250000000
     if args.lim is not None:
         size_limit = args.lim
@@ -520,14 +538,12 @@ def annotate(parser,args):
 
     ## recognize that coverage annotation is requested
     ## with an AF cutoff
-    if args.cov:
-        minc = args.cov
+    if check_cov:
         print("\nSV_Cov annotation requested; AF cutoff of: " + str(minc))
 
     ## recognize that unique annotation is requested
     ## with an AF cutoff
-    if args.uniq:
-        minu = args.uniq
+    if check_uniq:
         print("\nProducing uniques.bed output and SV_Uniq annotation requested; AF cutoff of: " + str(minu))
 
     ## get target file and prepare targets for pyranges
@@ -772,11 +788,11 @@ def annotate(parser,args):
             vcf.add_info_to_header({"ID": source + "_Matches", "Description": "Comma-separated list of  each SV match with " + source + ", where all annotations are listed as SV_ID|AF|HomRef|Het|HomAlt|Male_AF|Male_HomRef|Male_Het|Male_HomAlt|HemiAlt|Hemi_AF|Female_AF|Female_HomRef|Female_Het|Female_HomAlt|AFR_AF|AFR_HomRef|AFR_Het|AFR_HomAlt|AFR_Male_AF|AFR_Male_HomRef|AFR_Male_Het|AFR_Male_HomAlt|AFR_HemiAlt|AFR_Hemi_AF|AFR_Female_AF|AFR_Female_HomRef|AFR_Female_Het|AFR_Female_HomAlt|AMR_AF|AMR_HomRef|AMR_Het|AMR_HomAlt|AMR_Male_AF|AMR_Male_HomRef|AMR_Male_Het|AMR_Male_HomAlt|AMR_HemiAlt|AMR_Hemi_AF|AMR_Female_AF|AMR_Female_HomRef|AMR_Female_Het|AMR_Female_HomAlt|EAS_AF|EAS_HomRef|EAS_Het|EAS_HomAlt|EAS_Male_AF|EAS_Male_HomRef|EAS_Male_Het|EAS_Male_HomAlt|EAS_HemiAlt|EAS_Hemi_AF|EAS_Female_AF|EAS_Female_HomRef|EAS_Female_Het|EAS_Female_HomAlt|EUR_AF|EUR_HomRef|EUR_Het|EUR_HomAlt|EUR_Male_AF|EUR_Male_HomRef|EUR_Male_Het|EUR_Male_HomAlt|EUR_HemiAlt|EUR_Hemi_AF|EUR_Female_AF|EUR_Female_HomRef|EUR_Female_Het|EUR_Female_HomAlt|OTH_AF|OTH_HomRef|OTH_Het|OTH_HomAlt|OTH_Male_AF|OTH_Male_HomRef|OTH_Male_Het|OTH_Male_HomAlt|OTH_HemiAlt|OTH_Hemi_AF|OTH_Female_AF|OTH_Female_HomRef|OTH_Female_Het|OTH_Female_HomAlt|SAS_AF|SAS_HomRef|SAS_Het|SAS_HomAlt|SAS_Male_AF|SAS_Male_HomRef|SAS_Male_Het|SAS_Male_HomAlt|SAS_HemiAlt|SAS_Hemi_AF|SAS_Female_AF|SAS_Female_HomRef|SAS_Female_Het|SAS_Female_HomAlt|PopMax_AF|In_Pop as found in " + args.bed if args.bed else args.pickled_source, "Type": "String", "Number": "."})
 
         ## add SV_Cov if -c is used
-        if args.cov is not None:
+        if check_cov:
             vcf.add_info_to_header({'ID': 'SV_Cov', 'Description': 'The amount of the SV covered by matching SVs from ' + ', '.join(req_sources) + ' that have an AF greater than ' + str(minc), 'Type': 'Float', 'Number': '1'})
 
         ## add SV_Uniq if -u is used
-        if args.uniq is not None:
+        if check_uniq:
             vcf.add_info_to_header({'ID': 'SV_Uniq', 'Description': 'The number of unique regions within the SV that are not found in ' + ', '.join(req_sources) + ' that have an AF greater than ' + str(minu), 'Type': 'Integer', 'Number': '1'})
 
         ## add Targets_Overlaps if -t is used
@@ -784,7 +800,7 @@ def annotate(parser,args):
             vcf.add_info_to_header({'ID': 'Target_Overlaps', 'Description': 'The target overlaps found for the SV corresponding to targets listed in ' + str(args.target), 'Type': 'String', 'Number': '.'})
 
         ## add Unique_Targets if -u and -t is used:
-        if args.target is not None and args.uniq is not None:
+        if args.target is not None and check_uniq is not None:
             vcf.add_info_to_header({'ID': 'Unique_Targets', 'Description': 'The target overlaps found for the unique region within the SV corresponding to targets listed in ' + str(args.target), 'Type': 'String', 'Number': '.'})
 
     #if "CCDG" in req_sources:
@@ -892,7 +908,7 @@ def annotate(parser,args):
     ## identify unique regions within SV
     covs = {}
     uniqs = {}
-    if args.cov is not None or args.uniq is not None:
+    if check_cov or check_uniq is not None:
         print("\nCreating pyranges objects per SVTYPE from VCF data...")
         for svtype in sorted(svtype_lists):
             pr_vcf = pr.from_dict({"Chromosome": svtype_lists[svtype]['chrom'], \
@@ -902,7 +918,7 @@ def annotate(parser,args):
                                    "SVTYPE": svtype_lists[svtype]['svtype'], \
                                    "SV_ID": svtype_lists[svtype]['sv_id']})
             pr_vcf = pr.PyRanges(pr_vcf.df, int64=True)
-            if args.cov:
+            if check_cov:
                 print("\nRunning pyranges.coverage for:")
                 print(str(svtype))
                 ## combine data from all data sources into a single pyrange object
@@ -927,7 +943,7 @@ def annotate(parser,args):
                     covdict = dict(zip(covdf.SV_ID, covdf.Coverage))
                     covs.update(covdict)
 
-            if args.uniq is not None:
+            if check_uniq:
                 print("\nRunning pyranges.subtract for:")
                 print(str(svtype))
                 ## combine data from all data sources into a single pyrange object
@@ -957,7 +973,7 @@ def annotate(parser,args):
                             
     ## Create and output to uniques.bed
     ## if -u option invoked
-    if args.uniq:
+    if check_uniq:
         print("\nPrinting unique regions to uniques.bed")
         uniqs_file = open('uniques.bed', 'w')
 
@@ -1155,14 +1171,14 @@ def annotate(parser,args):
                     v.INFO[source + "_Matches"] = create_full_string(source,join_matches[source][sv_id],datas)
 
             ## write SV_Cov annotation
-            if args.cov:
+            if check_cov:
                 svcov = float(0)
                 if sv_id in covs:
                     svcov = float(covs[sv_id])
                 v.INFO['SV_Cov'] = svcov
 
             ## write SV_Uniq count annotation
-            if args.uniq:
+            if check_uniq:
                 num_u = int(0)
                 if sv_id in nuniqs:
                     num_u = int(nuniqs[sv_id])
@@ -1175,7 +1191,7 @@ def annotate(parser,args):
                     v.INFO['Target_Overlaps'] = tars
 
             ## write Unique_Targets annotation
-            if args.target is not None and args.uniq is not None:
+            if args.target is not None and check_uniq is not None:
                 if sv_id in uniq_targets:
                     v.INFO['Unique_Targets'] = ','.join(sorted(uniq_targets[sv_id]))
 
