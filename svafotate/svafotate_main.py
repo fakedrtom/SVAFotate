@@ -989,51 +989,69 @@ def annotate(parser,args):
         nuniqs = {}
         output = {}
         new_uniq_lists = defaultdict(list)
-        features = ['chrom','start','end','sv_id']
+        features = ['chrom','start','end','uniq_id']
         uniq_targets = {}
+        uniq_ids = {}
         for sv_id in uniqs:
-            if sv_id not in output:
-                output[sv_id] = []
-                if sv_id not in nuniqs:
-                    nuniqs[sv_id] = len(uniqs[sv_id])
+            if sv_id not in uniq_ids:
+                uniq_ids[sv_id] = []
+            uniq_cnt = 1
+            if sv_id not in nuniqs:
+                nuniqs[sv_id] = len(uniqs[sv_id])
             if len(uniqs[sv_id]) > 0:
                 for i in uniqs[sv_id]:
                     chrom = i[0]
                     start = i[1]
                     end = i[2]
+                    uniq_id = str(sv_id) + '_uniq_' + str(uniq_cnt)
+                    uniq_ids[sv_id].append(uniq_id)
+                    if uniq_id not in output:
+                        output[uniq_id] = []
                     out = [str(chrom),str(start),str(end),str(svtypes[sv_id]),str(sv_id),het_samples[sv_id],homalt_samples[sv_id]]
-                    output[sv_id].extend(out)
-                    variables = [chrom,start,end,sv_id]
+                    output[uniq_id].extend(out)
+                    variables = [chrom,start,end,uniq_id]
                     for i in range(len(variables)):
                         new_uniq_lists[features[i]].append(variables[i])
+                    uniq_cnt += 1
                         
         ## Adding targets to uniques.bed if -t requested
         if args.target and len(uniqs) > 0:
             pr_uniq = pr.from_dict({"Chromosome": new_uniq_lists['chrom'], \
                                     "Start": new_uniq_lists['start'], \
                                     "End": new_uniq_lists['end'], \
-                                    "SV_ID": new_uniq_lists['sv_id']})
+                                    "UNIQ_ID": new_uniq_lists['uniq_id']})
             pr_uniq = pr.PyRanges(pr_uniq.df, int64=True)
 
             uniq_join = pr_uniq.join(pr_tar).sort()
             uniqdf = uniq_join.as_df()
             if uniqdf.empty != True:
-                uniqdict = uniqdf.groupby("SV_ID").agg({"Targets": list }).transpose().to_dict()
+                uniqdict = uniqdf.groupby("UNIQ_ID").agg({"Targets": list }).transpose().to_dict()
                 for sv_id in uniqs:
-                    if sv_id in uniqdict:
-                        output[sv_id].extend([','.join(uniqdict[sv_id]['Targets'])])
-                        if sv_id not in uniq_targets:
-                            uniq_targets[sv_id] = [','.join(uniqdict[sv_id]['Targets'])]
-                    else:
-                        output[sv_id].extend(['None'])
+                    if sv_id in uniq_ids:
+                        for i in uniq_ids[sv_id]:
+                            if i in uniqdict:
+                                output[i].extend([','.join(uniqdict[i]['Targets'])])
+
+                                if sv_id not in uniq_targets:
+                                    uniq_targets[sv_id] = []
+                                uniq_targets[sv_id].extend(uniqdict[i]['Targets'])
+
+                            else:
+                                output[i].extend(['None'])
+
+
             else:
                 for sv_id in uniqs:
-                    output[sv_id].extend(['None'])
+                    if sv_id in uniq_ids:
+                        for i in uniq_ids[sv_id]:
+                            output[i].extend(['None'])
 
         ## write to uniques file the unique regions
         for sv_id in uniqs:
-            uniqs_file.write('\t'.join(output[sv_id]))
-            uniqs_file.write("\n")
+            if sv_id in uniq_ids:
+                for i in uniq_ids[sv_id]:
+                    uniqs_file.write('\t'.join(output[i]))
+                    uniqs_file.write("\n")
         uniqs_file.close()
 
     ########################################
@@ -1193,7 +1211,7 @@ def annotate(parser,args):
             ## write Unique_Targets annotation
             if args.target is not None and check_uniq is not None:
                 if sv_id in uniq_targets:
-                    v.INFO['Unique_Targets'] = ','.join(sorted(uniq_targets[sv_id]))
+                    v.INFO['Unique_Targets'] = ','.join(sorted(set(uniq_targets[sv_id])))
 
         new_vcf.write_record(v)
 
