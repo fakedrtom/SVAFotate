@@ -396,12 +396,15 @@ be added to the given SVs.
 
 ![max_af](https://github.com/fakedrtom/SVAFotate/blob/master/images/SV_Cov_example_fig.png)
 
-Please note that all overlaps from all given sources in the BED file are considered in this
-calculation provided that the SVs share the same SVTYPE. This will also measure *all* overlaps
-and not just those restricted by the `-f` option. This parameter does expect a minimum AF value
-to be included which restricts SVs from the BED file to only those meeting that value. In this
-manner, SVs from the BED file, perhaps very rare ones, can be exlcuded from the calculation of
-`SV_Cov`.
+All overlaps from all given sources in the BED file are considered when calculating `SV_Cov`, 
+provided that the SVs share the same SVTYPE, but source specific `SV_Cov` annotations are also 
+added. For example, if `CCDG` is one of the sources in the input BED file (and has not been excluded 
+using the `-s` parameter), `CCDG_SV_Cov` will be added and reflects the `SV_Cov` calculation 
+using only SVs from the input BED file that come from `CCDG`. All `SV_Cov` annotations measure 
+*all* overlaps and not just those restricted by the `-f` option. This parameter does expect 
+a minimum AF value to be included which restricts SVs from the BED file to only those meeting 
+that value. In this manner, SVs from the BED file, perhaps very rare ones, can be exlcuded from 
+the calculation of `SV_Cov`.
 
 #### Unique SV Regions
 ```
