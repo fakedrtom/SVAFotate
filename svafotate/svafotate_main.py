@@ -790,7 +790,8 @@ def annotate(parser,args):
         ## add SV_Cov if -c is used
         if check_cov:
             vcf.add_info_to_header({'ID': 'SV_Cov', 'Description': 'The amount of the SV covered by matching SVs from ' + ', '.join(req_sources) + ' that have an AF greater than ' + str(minc), 'Type': 'Float', 'Number': '1'})
-
+            vcf.add_info_to_header({'ID': source + '_SV_Cov', 'Description': 'The amount of the SV covered by matching SVs from ' + source + ' that have an AF greater than ' + str(minc), 'Type': 'Float', 'Number': '1'})
+            
         ## add SV_Uniq if -u is used
         if check_uniq:
             vcf.add_info_to_header({'ID': 'SV_Uniq', 'Description': 'The number of unique regions within the SV that are not found in ' + ', '.join(req_sources) + ' that have an AF greater than ' + str(minu), 'Type': 'Integer', 'Number': '1'})
@@ -907,6 +908,7 @@ def annotate(parser,args):
     ## identify coverage of SV overlaps
     ## identify unique regions within SV
     covs = {}
+    covs_sources = {}
     uniqs = {}
     if check_cov or check_uniq is not None:
         print("\nCreating pyranges objects per SVTYPE from VCF data...")
@@ -923,12 +925,41 @@ def annotate(parser,args):
                 print(str(svtype))
                 ## combine data from all data sources into a single pyrange object
                 fin_cov_lists = {}
+                print("Testing:")
                 for source in req_sources:
+                    print(str(source))
+                    if source not in covs_sources:
+                        covs_sources[source] = {}
+                    source_cov_lists = {}
                     for key in cov_lists[source][svtype]:
                         if key not in fin_cov_lists:
                             fin_cov_lists[key] = []
                         fin_cov_lists[key].extend(cov_lists[source][svtype][key])
 
+                        ## need to run source specifc pyranges coverage to calculate
+                        ## source specific SV_Cov
+                        if key not in source_cov_lists:
+                            source_cov_lists[key] = []
+                        source_cov_lists[key].extend(cov_lists[source][svtype][key])
+
+                    if 'chrom' not in source_cov_lists:
+                        print(svtype + " not found in " + source + ", skipping")
+                    else:
+                        pr_bed = pr.from_dict({"Chromosome": source_cov_lists['chrom'], \
+                                               "Start": source_cov_lists['start'], \
+                                               "End": source_cov_lists['end'], \
+                                               "SVLEN": source_cov_lists['svlen'], \
+                                               "SVTYPE": source_cov_lists['svtype'], \
+                                               "SV_ID": source_cov_lists['sv_id']})
+                        pr_bed = pr.PyRanges(pr_bed.df, int64=True)
+
+                        source_coveraged = pr_vcf.coverage(pr_bed, overlap_col="Overlaps", fraction_col="Coverage").sort()
+                        if not source_coveraged.empty:
+                            source_covdf = source_coveraged.as_df()
+                            source_covdict = dict(zip(source_covdf.SV_ID, source_covdf.Coverage))
+                            covs_sources[source].update(source_covdict)
+
+                ## now we get back to calculating the total SV_Cov using data from all sources
                 pr_bed = pr.from_dict({"Chromosome": fin_cov_lists['chrom'], \
                                        "Start": fin_cov_lists['start'], \
                                        "End": fin_cov_lists['end'], \
@@ -1194,6 +1225,12 @@ def annotate(parser,args):
                 if sv_id in covs:
                     svcov = float(covs[sv_id])
                 v.INFO['SV_Cov'] = svcov
+
+                ## add source specific SV_Cov
+                svcov_source = float(0)
+                if sv_id in covs_sources[source]:
+                    svcov_source = float(covs_sources[source][sv_id])
+                v.INFO[source + '_SV_Cov'] = svcov_source
 
             ## write SV_Uniq count annotation
             if check_uniq:
