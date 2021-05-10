@@ -866,7 +866,7 @@ def annotate(parser,args):
                 join_matches[source][sv_id].extend(filtered_matches_ids[sv_id])
 
             ## create SVTYPE best match dict
-            best_matches_ids = get_best(filtered_matches,source,datas,OFPs)
+            best_matches_ids = get_best(matches,source,datas,OFPs)
             for sv_id in best_matches_ids:
                 join_best_matches[source][sv_id].extend(best_matches_ids[sv_id])
 
@@ -883,7 +883,7 @@ def annotate(parser,args):
                 join_mismatches[source][sv_id].extend(filtered_mismatches_ids[sv_id])
 
             ## create SVTYPE best mismatch dict
-            best_mismatches_ids = get_best(filtered_mismatches,source,datas,OFPs)
+            best_mismatches_ids = get_best(mismatches,source,datas,OFPs)
             for sv_id in best_mismatches_ids:
                 join_best_mismatches[source][sv_id].extend(best_mismatches_ids[sv_id])
 
