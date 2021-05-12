@@ -306,7 +306,8 @@ Best_[data_source]_PopMax_AF	The PopMax_AF from the best SV_ID for that data sou
 ```
 
 The "best" match here is defined by the matching SVs with the highest overlap fraction
-product (OFP). Calculating the OFP is straightforward and relies on the genomic size of
+product (OFP) and considers all overlaps even those that may be filtered out using `-f` 
+option. Calculating the OFP is straightforward and relies on the genomic size of
 overlapping SVs and the amount of overlap that is shared between them.
 
 ![calculating_ofp](https://github.com/fakedrtom/SVAFotate/blob/master/images/calculating_ofp.png)
