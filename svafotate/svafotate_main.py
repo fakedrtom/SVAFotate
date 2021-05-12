@@ -1199,6 +1199,7 @@ def annotate(parser,args):
                     v.INFO[source + "_Mismatches_Count"] = len(join_mismatches[source][sv_id])
                     mismatch_svtypes = get_feature(source,join_mismatches[source][sv_id],header_cols["SVTYPE"],datas)
                     v.INFO[source + "_Mismatch_SVTYPEs"] = ",".join(sorted(list(set(mismatch_svtypes))))
+                if sv_id in join_best_mismatches[source]:
                     v.INFO["Best_" + source + "_Mismatch_ID"] = join_best_mismatches[source][sv_id][0]
                     v.INFO["Best_" + source + "_Mismatch_OFP"] = OFPs[source][sv_id][join_best_mismatches[source][sv_id][0]][0]
                     mismatch_svtype = get_feature(source,join_best_mismatches[source][sv_id],header_cols["SVTYPE"],datas)
