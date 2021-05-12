@@ -313,8 +313,7 @@ overlapping SVs and the amount of overlap that is shared between them.
 
 From this example, an overlap fraction is calculated for each SV by dividing the amount
 of overlap by the size of each SV, respectively. Then these fractions are multiplied to
-create the OFP which will range between 0.0 and 1.0. By using the `-f` option, OFP scores
-will be more resticted to certain ranges. As illustrated below, high OFP scores
+create the OFP which will range between 0.0 and 1.0. As illustrated below, high OFP scores
 reflect matching SVs that are more identical in terms of both their genomic sizes and the
 amount of overlap they share while low OFP scores suggest a disparity in genomic sizes
 between matching SVs or a low amount of shared overlap between them (or both a discrepancy
@@ -367,6 +366,13 @@ option. This will add the following annotations:
 [data_source]_Mismatches		Comma-separated list of the SV_IDs of overlapping SVs from the data source with different SVTYPEs
 [data_source]_Mismatches_Count		The number of overlapping SVs from the data source with different SVTYPEs
 [data_source]_Mismatch_SVTYPEs		Comma-separated list of the other overlapping SVTYPEs from the data source
+```
+
+The same requirements for traditional matching SVs will be applied here. For example, if the `-f`
+option is used, mismatched SVs will be required to meet those same thresholds. Additionally, the 
+following annotations will also be added reflecting the "best" mismatch based on OFP scores:
+
+```
 Best_[data_source]_Mismatch_ID		The SV_ID of the best overlapping SV with different SVTYPE from the data source
 Best_[data_source]_Mismatch_OFP		The OFP of the best overlapping SV with different SVTYPE from the data source
 Best_[data_source]_Mismatch_SVTYPE	The SVTYPE of the best mismatch SV_ID from the data source
@@ -374,11 +380,10 @@ Best_[data_source]_Mismatch_AF		The AF of the best mismatch SV_ID from the data 
 Best_[data_source]_Mismatch_Het		The Het count of the best mismatch SV_ID from the data source 
 Best_[data_source]_Mismatch_HomAlt	The HomAlt count of the best mismatch SV_ID from the data source 
 ```
-The same requirements for traditional matching SVs will be applied here. For example, if the `-f`
-option is used, mismatched SVs will be required to meet those same thresholds.
 
-When using the `-a` option, any combination of the above choices can be selected, but if `all`
-is included than all of these annotations will be added to the VCF.
+When using the `-a` option, any combination of the above (`mf`, `best`, `pops`, `full`, and 
+`mis`) choices can be selected, but if `all` is included than all of these annotations will 
+be added to the VCF.
 
 #### Observed SV Coverage
 ```
