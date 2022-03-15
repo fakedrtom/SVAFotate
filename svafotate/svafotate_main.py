@@ -610,7 +610,6 @@ def annotate(parser,args):
         end = int(v.INFO.get("END")) if v.INFO.get("END") is not None else int(v.POS)
         if v.INFO.get("END") is None and v.INFO.get("SVLEN") is not None:
             end = start + abs(v.INFO.get("SVLEN")) + 1
-#        end = int(v.INFO.get("END")) if svtype != "BND" else int(v.POS)
         end += int(ciend[1]) if args.ci == "out" else int(ciend[0]) if args.ci == "in" else 0
         end += int(ciend95[1]) if args.ci95 == "out" else int(ciend95[0]) if args.ci95 == "in" else 0
         end += int(args.emb) if args.emb is not None else 0
