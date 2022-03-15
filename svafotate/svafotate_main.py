@@ -146,6 +146,12 @@ def add_annotation(parser):
                    help="The number of cpus to use for multi-threading (Default = 1)."
     )
 
+    opt.add_argument("-O", "--out_type",
+                   metavar="OUTPUT FILE TYPE",
+                   choices=["vcf","vcfgz","bcf","bcfgz"],
+                   help="Specify output type as VCF (vcf), compressed VCF (vcfgz), BCF (bcf), or compressed BCF (bcfgz)."
+    )
+
     p.set_defaults(func=annotate)
 
 
@@ -433,6 +439,12 @@ def annotate(parser,args):
 
     ## output vcf file
     output_vcf = args.out
+
+    ## output type (vcf by default)
+    if args.out_type is not None:
+        outfile = args.out_type
+    else:
+        outfile = "vcf"
 
     ## save specified minimum overlap fraction threshold
     ## if none provided use 0.001
@@ -1092,7 +1104,17 @@ def annotate(parser,args):
     ########################################
 
     print("\nAdding annotations to output VCF...")
-    new_vcf = Writer(output_vcf, vcf)
+    new_vcf = (
+        Writer(output_vcf, vcf, "w")
+        if outfile == "vcf"
+        else Writer(output_vcf, vcf, "wz")
+        if outfile == "vcfgz"
+        else Writer(output_vcf, vcf, "wbu")
+        if outfile == "bcf"
+        else Writer(output_vcf, vcf, "wb")
+        if outfile == "bcfgz"
+        else Writer(output_vcf, vcf, "w")
+    )
     for v in vcf:
         sv_id = v.ID
         write_max_values(sv_id,join_matches,["AF","Het","HomAlt","PopMax_AF"],req_sources,datas,header_cols,header_types,v)
