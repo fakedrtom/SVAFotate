@@ -109,9 +109,9 @@ def add_annotation(parser):
 
     opt.add_argument('-t', '--target',
                     metavar='TARGETS BED FILE',
-                     help=("Path to target regions BED file."
-                           " Expected format is a tab delimited file listing CHROM START END ID"
-                           " where ID is a genomic region identifier that will be listed as an annotation if an overlap exists between a given SV and the target regions.")
+                    help=("Path to target regions BED file."
+                          " Expected format is a tab delimited file listing CHROM START END ID"
+                          " where ID is a genomic region identifier that will be listed as an annotation if an overlap exists between a given SV and the target regions.")
     )
 
     opt.add_argument("-ci", "--ci",
@@ -468,7 +468,7 @@ def annotate(parser,args):
             raise NameError("AF cutoff entered is invalid; please make sure that the value entered with --uniq is greater than or equal to 0 and less than 1")
 
     ## check that --lim is only used when --cov or --uniq is also used
-    if args.lim is not None and check_cov is None and check_uniq is None:
+    if args.lim is not None and check_cov is False and check_uniq is False:
         raise NameError("\nThe argument --lim must be used alongside --cov or --uniq; please include either --cov or --uniq")
 
     ## local vars
@@ -681,11 +681,6 @@ def annotate(parser,args):
     ## some sources have limited annotations
     ## specify the ones you want to add here
     ## for now this needs to be hardcoded
-#    source_cols = {}
-#    source_cols["CCDG"] = [0]
-#    source_cols["CEPH"] = list(list(range(0,14,1)) + [98,99])
-#    source_cols["gnomAD"] = list(list(range(0,84,1)) + [98,99])
-#    source_cols["1000G_Smoove"] = list(list(range(0,70,1)) + list(range(84,100,1)))
 
     ## main, default max annotations to add
     vcf.add_info_to_header({"ID": "Max_AF", "Description": "The maximum AF from all matching SVs across all specified data sources (" + ", ".join(req_sources) + ")", "Type": "Float", "Number": "1"})
@@ -815,17 +810,8 @@ def annotate(parser,args):
             vcf.add_info_to_header({'ID': 'Target_Overlaps', 'Description': 'The target overlaps found for the SV corresponding to targets listed in ' + str(args.target), 'Type': 'String', 'Number': '.'})
 
         ## add Unique_Targets if -u and -t is used:
-        if args.target is not None and check_uniq is not None:
+        if args.target is not None and check_uniq is not False:
             vcf.add_info_to_header({'ID': 'Unique_Targets', 'Description': 'The target overlaps found for the unique region within the SV corresponding to targets listed in ' + str(args.target), 'Type': 'String', 'Number': '.'})
-
-    #if "CCDG" in req_sources:
-    #    join_annotations("CCDG")
-    #if "CEPH" in req_sources:
-    #    join_annotations("CEPH")
-    #if "gnomAD" in req_sources:
-    #    join_annotations("gnomAD")
-    #if "1000G_Smoove" in req_sources:
-    #    join_annotations("1000G_Smoove")
 
     ########################################
     ##        Run pyRanges Commands       ##
@@ -1271,7 +1257,7 @@ def annotate(parser,args):
                     v.INFO['Target_Overlaps'] = tars
 
             ## write Unique_Targets annotation
-            if args.target is not None and check_uniq is not None:
+            if args.target is not None and check_uniq is not False:
                 if sv_id in uniq_targets:
                     v.INFO['Unique_Targets'] = ','.join(sorted(set(uniq_targets[sv_id])))
 
