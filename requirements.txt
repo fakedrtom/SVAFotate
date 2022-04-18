@@ -4,4 +4,5 @@ pyranges==0.0.95
 htslib==1.10.2
 zlib==1.2.11
 cyvcf2==0.30.4
+ncls==0.0.57
 python>=3
