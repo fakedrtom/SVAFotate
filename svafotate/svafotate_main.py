@@ -417,7 +417,7 @@ def create_full_string(source,my_list,datas):
 ###################################################################################################
 
 def annotate(parser,args):
-
+    
     from .annotation_utils import create_best_annotations, create_max_annotations, write_best_values, write_max_values  
     ########################################
     ##        Interpret Arguments         ##
@@ -640,6 +640,14 @@ def annotate(parser,args):
             start = fix_end
             end = fix_start
             print("Flipped to:")
+            print(str(chrom) + "\t"+ str(start) + "\t" + str(end))
+
+        ## Make sure that start and end are not same 
+        if start == end:
+            print("Problematic coordinates (start = end):")
+            print(str(chrom) + "\t" + str(start) + "\t" + str(end))
+            end = end + 1
+            print("Changed to:")
             print(str(chrom) + "\t"+ str(start) + "\t" + str(end))
 
         ## Get SVLEN
