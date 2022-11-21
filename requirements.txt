@@ -1,8 +1,0 @@
-pandas==1.2.3
-numpy
-pyranges==0.0.95
-htslib
-zlib
-cyvcf2==0.30.4
-ncls==0.0.57
-python>=3

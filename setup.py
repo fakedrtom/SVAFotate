@@ -33,6 +33,11 @@ setup(
         "License :: MIT License",
         "Development Status :: 4 - Beta",
         "Intended Audience :: Science/Research",
-        "Topic :: Scientific/Engineering :: Bio-Informatics"]
+        "Topic :: Scientific/Engineering :: Bio-Informatics"],
+
+    install_requires=["pandas",
+                      "numpy",
+                      "pyranges",
+                      "cyvcf2"]
 )
 
