@@ -1,5 +1,5 @@
 pandas==1.2.3
-numpy
+numpy==1.22.3
 pyranges==0.0.95
 htslib
 zlib
