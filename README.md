@@ -153,6 +153,13 @@ BED file include: CHROM, START, END, SVLEN, SVTYPE, SOURCE, SV_ID, and AF.
 Please note that all other columns do *not* need to be populated with actual data and where
 data is unavailable an 'NA' is recommended.
 
+Thanks to Adam English and the Sedlazeck lab, SV calls from TOPMed have been added to 
+SVAFotate. These calls can be found the BED file named:
+
+```
+TOPMed.GRCH38.bed.gz
+```
+
 A serialized pickle object of the BED file can be used in place of the BED file (`-p`).
 This may result in faster performance when using the SVAFotate `annotate` subcommand.
 Included with SVAFotate is the subcommand [pickle-source](https://github.com/fakedrtom/SVAFotate#pickle-source)
