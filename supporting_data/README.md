@@ -15,5 +15,3 @@ AFs can be found in the TOPMed.GRCH38.bed.gz file. This can be
 used as the sole input BED for SVAFotate or it can be combined with the 
 SVAFotate_core_SV_popAFs.GRCh38.bed.gz core BED file for more 
 comprehensive SV annotation.
-
-Testing
