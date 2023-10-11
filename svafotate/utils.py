@@ -94,6 +94,6 @@ def get_feature(source,my_list,col,datas):
     features = []
     for i in my_list:
         feature = datas[source][i][col]
-        if feature != "NA": 
+        if feature != "NA" and feature != "None": 
             features.append(feature)
     return(features)
