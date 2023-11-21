@@ -968,19 +968,22 @@ def annotate(parser,args):
                             covs_sources[source].update(source_covdict)
 
                 ## now we get back to calculating the total SV_Cov using data from all sources
-                pr_bed = pr.from_dict({"Chromosome": fin_cov_lists['chrom'], \
-                                       "Start": fin_cov_lists['start'], \
-                                       "End": fin_cov_lists['end'], \
-                                       "SVLEN": fin_cov_lists['svlen'], \
-                                       "SVTYPE": fin_cov_lists['svtype'], \
-                                       "SV_ID": fin_cov_lists['sv_id']})
-                pr_bed = pr.PyRanges(pr_bed.df, int64=True)
+                if 'chrom' not in fin_cov_lists:
+                    print(svtype + " not found in any sources, skipping")
+                else:
+                    pr_bed = pr.from_dict({"Chromosome": fin_cov_lists['chrom'], \
+                                           "Start": fin_cov_lists['start'], \
+                                           "End": fin_cov_lists['end'], \
+                                           "SVLEN": fin_cov_lists['svlen'], \
+                                           "SVTYPE": fin_cov_lists['svtype'], \
+                                           "SV_ID": fin_cov_lists['sv_id']})
+                    pr_bed = pr.PyRanges(pr_bed.df, int64=True)
 
-                coveraged = pr_vcf.coverage(pr_bed, overlap_col="Overlaps", fraction_col="Coverage").sort()
-                if not coveraged.empty:
-                    covdf = coveraged.as_df()
-                    covdict = dict(zip(covdf.SV_ID, covdf.Coverage))
-                    covs.update(covdict)
+                    coveraged = pr_vcf.coverage(pr_bed, overlap_col="Overlaps", fraction_col="Coverage").sort()
+                    if not coveraged.empty:
+                        covdf = coveraged.as_df()
+                        covdict = dict(zip(covdf.SV_ID, covdf.Coverage))
+                        covs.update(covdict)
 
             if check_uniq:
                 print("\nRunning pyranges.subtract for:")
@@ -993,22 +996,25 @@ def annotate(parser,args):
                             fin_uniq_lists[key] = []
                         fin_uniq_lists[key].extend(uniq_lists[source][svtype][key])
 
-                pr_bed = pr.from_dict({"Chromosome": fin_uniq_lists['chrom'], \
+                if 'chrom' not in fin_uniq_lists:
+                    print(svtype + " not found in " + source + ", skipping")
+                else:
+                    pr_bed = pr.from_dict({"Chromosome": fin_uniq_lists['chrom'], \
                                            "Start": fin_uniq_lists['start'], \
                                            "End": fin_uniq_lists['end'], \
                                            "SVLEN": fin_uniq_lists['svlen'], \
                                            "SVTYPE": fin_uniq_lists['svtype'], \
                                            "SV_ID": fin_uniq_lists['sv_id']})
-                pr_bed = pr.PyRanges(pr_bed.df, int64=True)
+                    pr_bed = pr.PyRanges(pr_bed.df, int64=True)
 
-                subtracted = pr_vcf.subtract(pr_bed).sort()
-                if not subtracted.empty:
-                    subdf = subtracted.as_df()
-                    for i,row in subdf.iterrows():
-                        sv_id = row.SV_ID
-                        if sv_id not in uniqs:
-                            uniqs[sv_id] = []
-                        uniqs[sv_id].append([row.Chromosome, row.Start, row.End])
+                    subtracted = pr_vcf.subtract(pr_bed).sort()
+                    if not subtracted.empty:
+                        subdf = subtracted.as_df()
+                        for i,row in subdf.iterrows():
+                            sv_id = row.SV_ID
+                            if sv_id not in uniqs:
+                                uniqs[sv_id] = []
+                            uniqs[sv_id].append([row.Chromosome, row.Start, row.End])
                             
     ## Create and output to uniques.bed
     ## if -u option invoked
