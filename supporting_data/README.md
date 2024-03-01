@@ -15,3 +15,9 @@ AFs can be found in the TOPMed.GRCH38.bed.gz file. This can be
 used as the sole input BED for SVAFotate or it can be combined with the 
 SVAFotate_core_SV_popAFs.GRCh38.bed.gz core BED file for more 
 comprehensive SV annotation.
+
+A BED file corresponding to SVs from gnomAD v4 is now available for 
+use with SVAFotate. Further updates to SVAFotate are required to 
+integrate all of the new features of gnomAD v4, but basic 
+functionality of SVAFotate should be available with this BED. 
+The BED can be downloaded [here](https://zenodo.org/records/10734967).
