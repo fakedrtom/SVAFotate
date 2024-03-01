@@ -5,6 +5,9 @@ Structural Variant Allele Frequency annotate or SVAFotate is a tool for
 annotating structural variant VCFs with population level allele frequency
 information and other related metrics.
 
+Please see the [SVAFotate publication](https://doi.org/10.1186/s12859-022-05008-y) 
+for more information and for citing purposes.
+
 Overview
 =========================
 Being able to distinguish whether a mutation or variant is common or
