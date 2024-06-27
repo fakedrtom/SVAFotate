@@ -78,7 +78,7 @@ $ pip install git+https://github.com/fakedrtom/SVAFotate.git
 ```
 $ svafotate --version
 
-svafotate 0.0.1
+svafotate 0.1.0
 ```
 
 Usage
