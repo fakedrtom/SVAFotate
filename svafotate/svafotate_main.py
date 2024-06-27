@@ -17,7 +17,7 @@ from .utils import get_feature, process_bed_source, process_pickled_source
 ###################################################################################################
 
 
-extra_annotation_choices = ["all", "mf", "best", "pops", "AFR", "AMR", "EAS", "EUR", "OTH", "SAS", "full", "mis"]
+extra_annotation_choices = ["all", "mf", "best", "pops", "AFR", "AMI", "AMR", "ASJ", "EAS", "EUR", "FIN", "MID", "NFE", "OTH", "SAS", "full", "mis"]
 
 
 ###################################################################################################
@@ -537,9 +537,14 @@ def annotate(parser,args):
             'best': 'Best match ID, frequencies and counts',
             'pops': 'All populations frequencies and counts',
             'AFR': 'AFR population frequencies and counts',
+            'AMI': 'AMI population frequencies and counts',
             'AMR': 'AMR population frequencies and counts',
+            'ASJ': 'ASJ population frequencies and counts',
             'EAS': 'EAS population frequencies and counts',
             'EUR': 'EUR population frequencies and counts',
+            'FIN': 'FIN population frequencies and counts',
+            'MID': 'MID population frequencies and counts',
+            'NFE': 'NFE population frequencies and counts',
             'OTH': 'OTH population frequencies and counts',
             'SAS': 'SAS population frequencies and counts',
             'full': 'Full annotations for all SV matches',
@@ -706,11 +711,23 @@ def annotate(parser,args):
         if "mf" in extras or "all" in extras:
             create_max_annotations(["AFR_Male","AFR_Female"],vcf,req_sources)
 
+    ## add AMI annotations
+    if "AMI" in extras or "pops" in extras or "all" in extras:
+        create_max_annotations(["AMI"],vcf,req_sources)
+        if "mf" in extras or "all" in extras:
+            create_max_annotations(["AMI_Male","AMI_Female"],vcf,req_sources)
+
     ## add AMR annotations
     if "AMR" in extras or "pops" in extras or "all" in extras:
         create_max_annotations(["AMR"],vcf,req_sources)
         if "mf" in extras or "all" in extras:
             create_max_annotations(["AMR_Male","AMR_Female"],vcf,req_sources)
+
+    ## add ASJ annotations
+    if "ASJ" in extras or "pops" in extras or "all" in extras:
+        create_max_annotations(["ASJ"],vcf,req_sources)
+        if "mf" in extras or "all" in extras:
+            create_max_annotations(["ASJ_Male","ASJ_Female"],vcf,req_sources)
 
     ## add EAS annotations
     if "EAS" in extras or "pops" in extras or "all" in extras:
@@ -723,6 +740,24 @@ def annotate(parser,args):
         create_max_annotations(["EUR"],vcf,req_sources)
         if "mf" in extras or "all" in extras:
             create_max_annotations(["EUR_Male","EUR_Female"],vcf,req_sources)
+
+    ## add FIN annotations
+    if "FIN" in extras or "pops" in extras or "all" in extras:
+        create_max_annotations(["FIN"],vcf,req_sources)
+        if "mf" in extras or "all" in extras:
+            create_max_annotations(["FIN_Male","FIN_Female"],vcf,req_sources)
+
+    ## add MID annotations
+    if "MID" in extras or "pops" in extras or "all" in extras:
+        create_max_annotations(["MID"],vcf,req_sources)
+        if "mf" in extras or "all" in extras:
+            create_max_annotations(["MID_Male","MID_Female"],vcf,req_sources)
+
+    ## add NFE annotations
+    if "NFE" in extras or "pops" in extras or "all" in extras:
+        create_max_annotations(["NFE"],vcf,req_sources)
+        if "mf" in extras or "all" in extras:
+            create_max_annotations(["NFE_Male","NFE_Female"],vcf,req_sources)
 
     ## add OTH annotations
     if "OTH" in extras or "pops" in extras or "all" in extras:
@@ -758,11 +793,23 @@ def annotate(parser,args):
                 if "mf" in extras or "all" in extras:
                     create_best_annotations(source,["AFR_Male","AFR_Female"],vcf)
 
+            ## add AMI best annotations
+            if "AMI" in extras or "pops" in extras or "all" in extras:
+                create_best_annotations(source,["AMI"],vcf)
+                if "mf" in extras or "all" in extras:
+                    create_best_annotations(source,["AMI_Male","AMI_Female"],vcf)
+
             ## add AMR best annotations
             if "AMR" in extras or "pops" in extras or "all" in extras:
                 create_best_annotations(source,["AMR"],vcf)
                 if "mf" in extras or "all" in extras:
                     create_best_annotations(source,["AMR_Male","AMR_Female"],vcf)
+
+            ## add ASJ best annotations
+            if "ASJ" in extras or "pops" in extras or "all" in extras:
+                create_best_annotations(source,["ASJ"],vcf)
+                if "mf" in extras or "all" in extras:
+                    create_best_annotations(source,["ASJ_Male","ASJ_Female"],vcf)
 
             ## add EAS best annotations
             if "EAS" in extras or "pops" in extras or "all" in extras:
@@ -775,6 +822,24 @@ def annotate(parser,args):
                 create_best_annotations(source,["EUR"],vcf)
                 if "mf" in extras or "all" in extras:
                     create_best_annotations(source,["EUR_Male","EUR_Female"],vcf)
+
+            ## add FIN best annotations
+            if "FIN" in extras or "pops" in extras or "all" in extras:
+                create_best_annotations(source,["FIN"],vcf)
+                if "mf" in extras or "all" in extras:
+                    create_best_annotations(source,["FIN_Male","FIN_Female"],vcf)
+
+            ## add MID best annotations
+            if "MID" in extras or "pops" in extras or "all" in extras:
+                create_best_annotations(source,["MID"],vcf)
+                if "mf" in extras or "all" in extras:
+                    create_best_annotations(source,["MID_Male","MID_Female"],vcf)
+
+            ## add NFE best annotations
+            if "NFE" in extras or "pops" in extras or "all" in extras:
+                create_best_annotations(source,["NFE"],vcf)
+                if "mf" in extras or "all" in extras:
+                    create_best_annotations(source,["NFE_Male","NFE_Female"],vcf)
 
             ## add OTH best annotations
             if "OTH" in extras or "pops" in extras or "all" in extras:
@@ -802,7 +867,7 @@ def annotate(parser,args):
 
         ## add full list of matches annotations
         if "full" in extras or "all" in extras:
-            vcf.add_info_to_header({"ID": source + "_Matches", "Description": "Comma-separated list of  each SV match with " + source + ", where all annotations are listed as SV_ID|AF|HomRef|Het|HomAlt|Male_AF|Male_HomRef|Male_Het|Male_HomAlt|HemiAlt|Hemi_AF|Female_AF|Female_HomRef|Female_Het|Female_HomAlt|AFR_AF|AFR_HomRef|AFR_Het|AFR_HomAlt|AFR_Male_AF|AFR_Male_HomRef|AFR_Male_Het|AFR_Male_HomAlt|AFR_HemiAlt|AFR_Hemi_AF|AFR_Female_AF|AFR_Female_HomRef|AFR_Female_Het|AFR_Female_HomAlt|AMR_AF|AMR_HomRef|AMR_Het|AMR_HomAlt|AMR_Male_AF|AMR_Male_HomRef|AMR_Male_Het|AMR_Male_HomAlt|AMR_HemiAlt|AMR_Hemi_AF|AMR_Female_AF|AMR_Female_HomRef|AMR_Female_Het|AMR_Female_HomAlt|EAS_AF|EAS_HomRef|EAS_Het|EAS_HomAlt|EAS_Male_AF|EAS_Male_HomRef|EAS_Male_Het|EAS_Male_HomAlt|EAS_HemiAlt|EAS_Hemi_AF|EAS_Female_AF|EAS_Female_HomRef|EAS_Female_Het|EAS_Female_HomAlt|EUR_AF|EUR_HomRef|EUR_Het|EUR_HomAlt|EUR_Male_AF|EUR_Male_HomRef|EUR_Male_Het|EUR_Male_HomAlt|EUR_HemiAlt|EUR_Hemi_AF|EUR_Female_AF|EUR_Female_HomRef|EUR_Female_Het|EUR_Female_HomAlt|OTH_AF|OTH_HomRef|OTH_Het|OTH_HomAlt|OTH_Male_AF|OTH_Male_HomRef|OTH_Male_Het|OTH_Male_HomAlt|OTH_HemiAlt|OTH_Hemi_AF|OTH_Female_AF|OTH_Female_HomRef|OTH_Female_Het|OTH_Female_HomAlt|SAS_AF|SAS_HomRef|SAS_Het|SAS_HomAlt|SAS_Male_AF|SAS_Male_HomRef|SAS_Male_Het|SAS_Male_HomAlt|SAS_HemiAlt|SAS_Hemi_AF|SAS_Female_AF|SAS_Female_HomRef|SAS_Female_Het|SAS_Female_HomAlt|PopMax_AF|In_Pop as found in " + args.bed if args.bed else args.pickled_source, "Type": "String", "Number": "."})
+            vcf.add_info_to_header({"ID": source + "_Matches", "Description": "Comma-separated list of  each SV match with " + source + ", where all annotations are listed as SV_ID|AF|HomRef|Het|HomAlt|Male_AF|Male_HomRef|Male_Het|Male_HomAlt|HemiAlt|Hemi_AF|Female_AF|Female_HomRef|Female_Het|Female_HomAlt|AFR_AF|AFR_HomRef|AFR_Het|AFR_HomAlt|AFR_Male_AF|AFR_Male_HomRef|AFR_Male_Het|AFR_Male_HomAlt|AFR_HemiAlt|AFR_Hemi_AF|AFR_Female_AF|AFR_Female_HomRef|AFR_Female_Het|AFR_Female_HomAlt|AMI_AF|AMI_HomRef|AMI_Het|AMI_HomAlt|AMI_Male_AF|AMI_Male_HomRef|AMI_Male_Het|AMI_Male_HomAlt|AMI_HemiAlt|AMI_Hemi_AF|AMI_Female_AF|AMI_Female_HomRef|AMI_Female_Het|AMI_Female_HomAlt|AMR_AF|AMR_HomRef|AMR_Het|AMR_HomAlt|AMR_Male_AF|AMR_Male_HomRef|AMR_Male_Het|AMR_Male_HomAlt|AMR_HemiAlt|AMR_Hemi_AF|AMR_Female_AF|AMR_Female_HomRef|AMR_Female_Het|AMR_Female_HomAlt|ASJ_AF|ASJ_HomRef|ASJ_Het|ASJ_HomAlt|ASJ_Male_AF|ASJ_Male_HomRef|ASJ_Male_Het|ASJ_Male_HomAlt|ASJ_HemiAlt|ASJ_Hemi_AF|ASJ_Female_AF|ASJ_Female_HomRef|ASJ_Female_Het|ASJ_Female_HomAlt|EAS_AF|EAS_HomRef|EAS_Het|EAS_HomAlt|EAS_Male_AF|EAS_Male_HomRef|EAS_Male_Het|EAS_Male_HomAlt|EAS_HemiAlt|EAS_Hemi_AF|EAS_Female_AF|EAS_Female_HomRef|EAS_Female_Het|EAS_Female_HomAlt|EUR_AF|EUR_HomRef|EUR_Het|EUR_HomAlt|EUR_Male_AF|EUR_Male_HomRef|EUR_Male_Het|EUR_Male_HomAlt|EUR_HemiAlt|EUR_Hemi_AF|EUR_Female_AF|EUR_Female_HomRef|EUR_Female_Het|EUR_Female_HomAlt|FIN_AF|FIN_HomRef|FIN_Het|FIN_HomAlt|FIN_Male_AF|FIN_Male_HomRef|FIN_Male_Het|FIN_Male_HomAlt|FIN_HemiAlt|FIN_Hemi_AF|FIN_Female_AF|FIN_Female_HomRef|FIN_Female_Het|FIN_Female_HomAlt|MID_AF|MID_HomRef|MID_Het|MID_HomAlt|MID_Male_AF|MID_Male_HomRef|MID_Male_Het|MID_Male_HomAlt|MID_HemiAlt|MID_Hemi_AF|MID_Female_AF|MID_Female_HomRef|MID_Female_Het|MID_Female_HomAlt|NFE_AF|NFE_HomRef|NFE_Het|NFE_HomAlt|NFE_Male_AF|NFE_Male_HomRef|NFE_Male_Het|NFE_Male_HomAlt|NFE_HemiAlt|NFE_Hemi_AF|NFE_Female_AF|NFE_Female_HomRef|NFE_Female_Het|NFE_Female_HomAlt|OTH_AF|OTH_HomRef|OTH_Het|OTH_HomAlt|OTH_Male_AF|OTH_Male_HomRef|OTH_Male_Het|OTH_Male_HomAlt|OTH_HemiAlt|OTH_Hemi_AF|OTH_Female_AF|OTH_Female_HomRef|OTH_Female_Het|OTH_Female_HomAlt|SAS_AF|SAS_HomRef|SAS_Het|SAS_HomAlt|SAS_Male_AF|SAS_Male_HomRef|SAS_Male_Het|SAS_Male_HomAlt|SAS_HemiAlt|SAS_Hemi_AF|SAS_Female_AF|SAS_Female_HomRef|SAS_Female_Het|SAS_Female_HomAlt|PopMax_AF|In_Pop as found in " + args.bed if args.bed else args.pickled_source, "Type": "String", "Number": "."})
 
         ## add SV_Cov if -c is used
         if check_cov:
@@ -1129,11 +1194,23 @@ def annotate(parser,args):
             if "mf" in extras or "all" in extras:
                 write_max_values(sv_id,join_matches,["AFR_Male_AF","AFR_Male_Het","AFR_Male_HomAlt","AFR_Female_AF","AFR_Female_Het","AFR_Female_HomAlt"],req_sources,datas,header_cols,header_types,v)
 
+        ## write AMI annotations
+        if "AMI" in extras or "pops" in extras or "all" in extras:
+            write_max_values(sv_id,join_matches,["AMI_AF","AMI_Het","AMI_HomAlt"],req_sources,datas,header_cols,header_types,v)
+            if "mf" in extras or "all" in extras:
+                write_max_values(sv_id,join_matches,["AMI_Male_AF","AMI_Male_Het","AMI_Male_HomAlt","AMI_Female_AF","AMI_Female_Het","AMI_Female_HomAlt"],req_sources,datas,header_cols,header_types,v)
+
         ## write AMR annotations
         if "AMR" in extras or "pops" in extras or "all" in extras:
             write_max_values(sv_id,join_matches,["AMR_AF","AMR_Het","AMR_HomAlt"],req_sources,datas,header_cols,header_types,v)
             if "mf" in extras or "all" in extras:
                 write_max_values(sv_id,join_matches,["AMR_Male_AF","AMR_Male_Het","AMR_Male_HomAlt","AMR_Female_AF","AMR_Female_Het","AMR_Female_HomAlt"],req_sources,datas,header_cols,header_types,v)
+
+        ## write ASJ annotations
+        if "ASJ" in extras or "pops" in extras or "all" in extras:
+            write_max_values(sv_id,join_matches,["ASJ_AF","ASJ_Het","ASJ_HomAlt"],req_sources,datas,header_cols,header_types,v)
+            if "mf" in extras or "all" in extras:
+                write_max_values(sv_id,join_matches,["ASJ_Male_AF","ASJ_Male_Het","ASJ_Male_HomAlt","ASJ_Female_AF","ASJ_Female_Het","ASJ_Female_HomAlt"],req_sources,datas,header_cols,header_types,v)
 
         ## write EAS annotations
         if "EAS" in extras or "pops" in extras or "all" in extras:
@@ -1146,6 +1223,24 @@ def annotate(parser,args):
             write_max_values(sv_id,join_matches,["EUR_AF","EUR_Het","EUR_HomAlt"],req_sources,datas,header_cols,header_types,v)
             if "mf" in extras or "all" in extras:
                 write_max_values(sv_id,join_matches,["EUR_Male_AF","EUR_Male_Het","EUR_Male_HomAlt","EUR_Female_AF","EUR_Female_Het","EUR_Female_HomAlt"],req_sources,datas,header_cols,header_types,v)
+
+        ## write FIN annotations
+        if "FIN" in extras or "pops" in extras or "all" in extras:
+            write_max_values(sv_id,join_matches,["FIN_AF","FIN_Het","FIN_HomAlt"],req_sources,datas,header_cols,header_types,v)
+            if "mf" in extras or "all" in extras:
+                write_max_values(sv_id,join_matches,["FIN_Male_AF","FIN_Male_Het","FIN_Male_HomAlt","FIN_Female_AF","FIN_Female_Het","FIN_Female_HomAlt"],req_sources,datas,header_cols,header_types,v)
+
+        ## write MID annotations
+        if "MID" in extras or "pops" in extras or "all" in extras:
+            write_max_values(sv_id,join_matches,["MID_AF","MID_Het","MID_HomAlt"],req_sources,datas,header_cols,header_types,v)
+            if "mf" in extras or "all" in extras:
+                write_max_values(sv_id,join_matches,["MID_Male_AF","MID_Male_Het","MID_Male_HomAlt","MID_Female_AF","MID_Female_Het","MID_Female_HomAlt"],req_sources,datas,header_cols,header_types,v)
+
+        ## write NFE annotations
+        if "NFE" in extras or "pops" in extras or "all" in extras:
+            write_max_values(sv_id,join_matches,["NFE_AF","NFE_Het","NFE_HomAlt"],req_sources,datas,header_cols,header_types,v)
+            if "mf" in extras or "all" in extras:
+                write_max_values(sv_id,join_matches,["NFE_Male_AF","NFE_Male_Het","NFE_Male_HomAlt","NFE_Female_AF","NFE_Female_Het","NFE_Female_HomAlt"],req_sources,datas,header_cols,header_types,v)
 
         ## write OTH annotations
         if "OTH" in extras or "pops" in extras or "all" in extras:
@@ -1186,11 +1281,23 @@ def annotate(parser,args):
                         if "mf" in extras or "all" in extras:
                             write_best_values(source,sv_id,join_best_matches,["AFR_Male_AF","AFR_Male_Het","AFR_Male_HomAlt","AFR_Female_AF","AFR_Female_Het","AFR_Female_HomAlt"],datas,header_cols,v)
 
+                    ## write AMI best annotations
+                    if "AMI" in extras or "pops" in extras or "all" in extras:
+                        write_best_values(source,sv_id,join_best_matches,["AMI_AF","AMI_Het","AMI_HomAlt"],datas,header_cols,v)
+                        if "mf" in extras or "all" in extras:
+                            write_best_values(source,sv_id,join_best_matches,["AMI_Male_AF","AMI_Male_Het","AMI_Male_HomAlt","AMI_Female_AF","AMI_Female_Het","AMI_Female_HomAlt"],datas,header_cols,v)
+
                     ## write AMR best annotations
                     if "AMR" in extras or "pops" in extras or "all" in extras:
                         write_best_values(source,sv_id,join_best_matches,["AMR_AF","AMR_Het","AMR_HomAlt"],datas,header_cols,v)
                         if "mf" in extras or "all" in extras:
                             write_best_values(source,sv_id,join_best_matches,["AMR_Male_AF","AMR_Male_Het","AMR_Male_HomAlt","AMR_Female_AF","AMR_Female_Het","AMR_Female_HomAlt"],datas,header_cols,v)
+
+                    ## write ASJ best annotations
+                    if "ASJ" in extras or "pops" in extras or "all" in extras:
+                        write_best_values(source,sv_id,join_best_matches,["ASJ_AF","ASJ_Het","ASJ_HomAlt"],datas,header_cols,v)
+                        if "mf" in extras or "all" in extras:
+                            write_best_values(source,sv_id,join_best_matches,["ASJ_Male_AF","ASJ_Male_Het","ASJ_Male_HomAlt","ASJ_Female_AF","ASJ_Female_Het","ASJ_Female_HomAlt"],datas,header_cols,v)
 
                     ## write EAS best annotations
                     if "EAS" in extras or "pops" in extras or "all" in extras:
@@ -1203,6 +1310,24 @@ def annotate(parser,args):
                         write_best_values(source,sv_id,join_best_matches,["EUR_AF","EUR_Het","EUR_HomAlt"],datas,header_cols,v)
                         if "mf" in extras or "all" in extras:
                             write_best_values(source,sv_id,join_best_matches,["EUR_Male_AF","EUR_Male_Het","EUR_Male_HomAlt","EUR_Female_AF","EUR_Female_Het","EUR_Female_HomAlt"],datas,header_cols,v)
+
+                    ## write FIN best annotations
+                    if "FIN" in extras or "pops" in extras or "all" in extras:
+                        write_best_values(source,sv_id,join_best_matches,["FIN_AF","FIN_Het","FIN_HomAlt"],datas,header_cols,v)
+                        if "mf" in extras or "all" in extras:
+                            write_best_values(source,sv_id,join_best_matches,["FIN_Male_AF","FIN_Male_Het","FIN_Male_HomAlt","FIN_Female_AF","FIN_Female_Het","FIN_Female_HomAlt"],datas,header_cols,v)
+
+                    ## write MID best annotations
+                    if "MID" in extras or "pops" in extras or "all" in extras:
+                        write_best_values(source,sv_id,join_best_matches,["MID_AF","MID_Het","MID_HomAlt"],datas,header_cols,v)
+                        if "mf" in extras or "all" in extras:
+                            write_best_values(source,sv_id,join_best_matches,["MID_Male_AF","MID_Male_Het","MID_Male_HomAlt","MID_Female_AF","MID_Female_Het","MID_Female_HomAlt"],datas,header_cols,v)
+
+                    ## write NFE best annotations
+                    if "NFE" in extras or "pops" in extras or "all" in extras:
+                        write_best_values(source,sv_id,join_best_matches,["NFE_AF","NFE_Het","NFE_HomAlt"],datas,header_cols,v)
+                        if "mf" in extras or "all" in extras:
+                            write_best_values(source,sv_id,join_best_matches,["NFE_Male_AF","NFE_Male_Het","NFE_Male_HomAlt","NFE_Female_AF","NFE_Female_Het","NFE_Female_HomAlt"],datas,header_cols,v)
 
                     ## write OTH best annotations
                     if "OTH" in extras or "pops" in extras or "all" in extras:
