@@ -3,7 +3,9 @@ gnomAD v4.1. The size of this file prevents it from being hosted
 in this repo, but it can be downloaded from [here](https://zenodo.org/records/11642574). 
 Because this version of gnomAD includes new populations, the SV calls 
 from CCDG, 1000G, and TOPMed have been reformatted to account for these 
-additional populations. Since gnomAD v4.1 was aligned to GRCh38, no 
+additional populations. Please note that 1000G SVs are identified 
+with `ThousG` in this file to better aid downstream use VCFs annotated 
+by SVAFotate. Since gnomAD v4.1 was aligned to GRCh38, no 
 liftover was required to create this data. It is recommended that 
 this BED file be used over the older files listed (and described below) 
 in this repo. 
