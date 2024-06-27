@@ -1,3 +1,13 @@
+An updated core BED file is now available that integrates SVs from 
+gnomAD v4.1. The size of this file prevents it from being hosted 
+in this repo, but it can be downloaded from [here](https://zenodo.org/records/11642574). 
+Because this version of gnomAD includes new populations, the SV calls 
+from CCDG, 1000G, and TOPMed have been reformatted to account for these 
+additional populations. Since gnomAD v4.1 was aligned to GRCh38, no 
+liftover was required to create this data. It is recommended that 
+this BED file be used over the older files listed (and described below) 
+in this repo. 
+
 The core BED files provided here are made up of SV calls 
 from CCDG, gnomAD, and 1000G. CCDG and 1000G were called 
 using the GRCh38 reference while the gnomAD calls were 
@@ -15,9 +25,3 @@ AFs can be found in the TOPMed.GRCH38.bed.gz file. This can be
 used as the sole input BED for SVAFotate or it can be combined with the 
 SVAFotate_core_SV_popAFs.GRCh38.bed.gz core BED file for more 
 comprehensive SV annotation.
-
-A BED file corresponding to SVs from gnomAD v4 is now available for 
-use with SVAFotate. Further updates to SVAFotate are required to 
-integrate all of the new features of gnomAD v4, but basic 
-functionality of SVAFotate should be available with this BED. 
-The BED can be downloaded [here](https://zenodo.org/records/10734967).
