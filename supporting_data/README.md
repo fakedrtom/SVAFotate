@@ -8,8 +8,8 @@ additional populations. Please note that 1000G SVs are identified
 with `ThousG` in this file to better aid downstream use of VCFs 
 annotated by SVAFotate. Since gnomAD v4.1 was aligned to GRCh38, no 
 liftover was required to create this data. Since this file did not 
-require any genomic coordiantes liftover, and because it contains more 
-up to date SV calls from population datasets, it is recommended that 
+require any genomic coordinates liftover, and because it contains more 
+up-to-date SV calls from population datasets, it is recommended that 
 this BED file be used over the older files listed (and described below) 
 in this repo. 
 
