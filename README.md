@@ -155,7 +155,8 @@ BED file include: CHROM, START, END, SVLEN, SVTYPE, SOURCE, SV_ID, and AF.
 Please note that all other columns do *not* need to be populated with actual data and where
 data is unavailable an 'NA' should be added.
 
-**CURRENTLY UNAVAILABLE** A serialized pickle object of the BED file can be used in place of the BED file (`-p`).
+**CURRENTLY UNAVAILABLE** 
+A serialized pickle object of the BED file can be used in place of the BED file (`-p`).
 This may result in faster performance when using the SVAFotate `annotate` subcommand.
 Included with SVAFotate is the subcommand [pickle-source](https://github.com/fakedrtom/SVAFotate#pickle-source)
 which enables a pickle object of a BED file to be generated and then repeatedly used
@@ -331,8 +332,8 @@ will also be included for those annotations.
 
 The suggested BED file `SVAFotate_core_SV_popAFs.GRCh38.v4.1.bed.gz` contains data from gnomAD, 1000G, 
 and TOPMed which include population specific metrics belonging to the following populations:
-AFR, AMI, AMR, ASJ, EAS, EUR, FIN, MID, NFE, OTH, and SAS AFR, AMR, EAS, EUR, OTH, and SAS. 
-The `pops` choice will add the following annotations for all populations:
+AFR, AMI, AMR, ASJ, EAS, EUR, FIN, MID, NFE, OTH, and SAS. The `pops` choice will add the 
+following annotations for all populations:
 
 ```
 Max_[population]_AF	    The maximum population AF from all matching SVs across all specified data sources
@@ -508,14 +509,16 @@ genomic coordinates when using the `-f` option for requiring reciprocal overlaps
   --cpu CPU Count       The number of cpus to use for multi-threading (Default = 1).
 ```
 
-**Currently experiencing technical difficulties; mileage may vary** SVAFotate may use 
-additional cpus for multi-threading purposes which can be designated using the `--cpu` 
-option.
+**Currently experiencing technical difficulties; mileage may vary** 
+
+SVAFotate may use additional cpus for multi-threading purposes which can be 
+designated using the `--cpu` option.
 
 pickle-source
 ------------------------
-**Please not that pickle-sources are currently unavaible for use with `annotate`; `pickle-source` 
+**Please note that pickle-sources are currently unavaible for use with `annotate`; `pickle-source` 
 should still work, but its application with `annotate` may render this less useful for now** 
+
 Since SVAFotate may be used repeatedly on different SV VCFs with the same BED file, it
 may be advantageous to create a pickle object of the BED file to improve SVAFotate's
 performance when running the `annotate` subcommand. This is optional. If SVAFotate or
