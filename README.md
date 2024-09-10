@@ -129,7 +129,8 @@ As stated, this requires an input VCF (`-v`) and output VCF name (`-o`). SVAFota
 developed using SV VCFs derived from the Lumpy SV caller, however it has
 been tested on VCFs created by other SV callers. As long as SVTYPE and END
 (preferably SVLEN as well) are included in the INFO fields, any SV VCF that
-follows expected VCF conventions should be usable with SVAFotate.
+follows expected VCF conventions should be usable with SVAFotate. Please note that a
+unique SV ID (column 3 or the `ID` column of the VCF) is also expected. 
 
 SVAFotate also requires a BED file corresponding to population SV data (`-b`) that you
 wish to compare the SVs in the input VCF against. A BED file with currently available
