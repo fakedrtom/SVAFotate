@@ -152,6 +152,11 @@ def add_annotation(parser):
                    help="Specify output type as VCF (vcf), compressed VCF (vcfgz), BCF (bcf), or compressed BCF (bcfgz)."
     )
 
+    opt.add_argument("--ins",
+                   action='store_true',  
+                   help="Use SVLEN to adjust insertions coordinates, allowing for reciprocal overlap matching with insertions"
+    )
+        
     p.set_defaults(func=annotate)
 
 
@@ -266,12 +271,14 @@ def INS_conv(row):
     row.End_b = int(row.Start_b) + int(row.SVLEN_b) if ((int(row.End_b) - int(row.Start_b)) < int(row.SVLEN_b)) else int(row.End_b)
     return(row)
 
-def convert_dict(pr):
+def convert_dict(pr,conv_ins):
     ## change a pyranges object into a dictionary
     ## input is a pyranges object
     ## returns a dictionary with main key, "SV_ID"
+    ## if args.ins then adjust the INS coords with INS_conv
     df = pr.as_df()
-    df[df.SVTYPE == "INS"] = df[df.SVTYPE == "INS"].apply(INS_conv,axis=1)
+    if conv_ins is True:
+        df[df.SVTYPE == "INS"] = df[df.SVTYPE == "INS"].apply(INS_conv,axis=1)
     df["Overlap"] = df[["Start","End","Start_b","End_b","SV_ID_b"]].values.tolist()
     df["Fraction"] = df["Overlap"]
     df["Fraction_b"] = df["Overlap"]
@@ -286,11 +293,11 @@ def convert_dict(pr):
     return(my_dict)
 
 
-def reciprocal_overlap(my_dict,source,minfs,svtypes):
+def reciprocal_overlap(my_dict,source,minfs,svtypes,conv_ins):
     ## using minf, filter products of pyranges.join based on amount of reciprocal overlap
     ## expect dictionary (from convert_dict)
     ## returns dictionary of those that pass the filter
-    ## doesn't apply to INS
+    ## doesn't apply to INS if not args.ins
 
     minf = float(minfs[source])
     pass_filter = defaultdict(lambda: defaultdict(list))
@@ -306,7 +313,7 @@ def reciprocal_overlap(my_dict,source,minfs,svtypes):
             fract1 = float(my_dict[sv_id]["Fraction"][i])
             fract2 = float(my_dict[sv_id]["Fraction_b"][i])
 
-            if svtypes[sv_id] != "INS":
+            if svtypes[sv_id] != "INS" or conv_ins is True:
                 if fract1 >= minf and fract2 >= minf:
                     pass_filter[sv_id]["Start"].append(start)
                     pass_filter[sv_id]["End"].append(end)
@@ -317,7 +324,7 @@ def reciprocal_overlap(my_dict,source,minfs,svtypes):
                     pass_filter[sv_id]["Fraction"].append(fract1)
                     pass_filter[sv_id]["Fraction_b"].append(fract2)
 
-            elif svtypes[sv_id] == "INS":
+            elif svtypes[sv_id] == "INS" and conv_ins is False: #elif svtypes[sv_id] == "INS":
                 pass_filter[sv_id]["Start"].append(start)
                 pass_filter[sv_id]["End"].append(end)
                 pass_filter[sv_id]["Start_b"].append(start2)
@@ -446,6 +453,9 @@ def annotate(parser,args):
     else:
         outfile = "vcf"
 
+    ## setup insertion paramter
+    conv_ins = True if args.ins else False
+    
     ## save specified minimum overlap fraction threshold
     ## if none provided use 0.001
     if args.minf is not None:
@@ -930,8 +940,8 @@ def annotate(parser,args):
         if pr_matches.empty:
             print("There are no overlap matches for " + source)
         if not pr_matches.empty:
-            matches = convert_dict(pr_matches)
-            filtered_matches = reciprocal_overlap(matches,source,minfs,svtypes)
+            matches = convert_dict(pr_matches,conv_ins)
+            filtered_matches = reciprocal_overlap(matches,source,minfs,svtypes,conv_ins)
             filtered_matches_ids = defaultdict(list)
             for sv_id in filtered_matches:
                 for i in filtered_matches[sv_id]["SV_ID_b"]:
@@ -947,8 +957,8 @@ def annotate(parser,args):
         if pr_mismatches.empty:
             print("There are no overlap mismacthes for " + source)
         if not pr_mismatches.empty:
-            mismatches = convert_dict(pr_mismatches)
-            filtered_mismatches = reciprocal_overlap(mismatches,source,minfs,svtypes)
+            mismatches = convert_dict(pr_mismatches,conv_ins)
+            filtered_mismatches = reciprocal_overlap(mismatches,source,minfs,svtypes,conv_ins)
             filtered_mismatches_ids = defaultdict(list)
             for sv_id in filtered_mismatches:
                 for i in filtered_mismatches[sv_id]["SV_ID_b"]:

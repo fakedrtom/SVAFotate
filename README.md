@@ -217,10 +217,14 @@ and INVs. This matching scheme can be more complicted for other SVTYPEs. Inserti
 with an accompanying SVLEN that reflects the size of the insertion. INSs are still matched
 based on overlapping coordinates, which generally means that INSs from the input VCF only match
 when their coordinates are (nearly) the same as those in the BED file (even if SVLENs differ).
-Reported SVLENs for INSs are then used if certain options (such as `-f` or `-a best`) are
-requested to better refine the matching INSs. Other even more complex SVTYPES may require more
-specialized attention. In some of these cases, it may be helpful to include the `-a mis`
-parameter which would add annotations regarding overlapping SVs that have different SVTYPEs.
+By using the optional `--ins` parameter, INS coordinates can be increased based on included SVLENs (the SVLEN
+will be added to the END coordinate to create a new END). This may allow INSs to be used more
+amply alongside other options (such as `-f` or `-a best`) and may better refine the matching INSs.
+Please note that these options will not match the INSs on actual insertion sequence content, even
+if that is provided. With that in mind, it may be best to match INSs on their more limited single
+basepair coordinate and then better assess them seperately. Other even more complex SVTYPES may
+require more specialized attention. In some of these cases, it may be helpful to include the
+`-a mis` parameter which would add annotations regarding overlapping SVs that have different SVTYPEs.
 For more information please see the [Extra Annotations](https://github.com/fakedrtom/SVAFotate#extra-annotations)
 section.
 
