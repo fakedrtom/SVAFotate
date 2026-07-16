@@ -324,7 +324,7 @@ def reciprocal_overlap(my_dict,source,minfs,svtypes,conv_ins):
                     pass_filter[sv_id]["Fraction"].append(fract1)
                     pass_filter[sv_id]["Fraction_b"].append(fract2)
 
-            elif svtypes[sv_id] == "INS" and conv_ins is False: #elif svtypes[sv_id] == "INS":
+            elif svtypes[sv_id] == "INS" and conv_ins is False:
                 pass_filter[sv_id]["Start"].append(start)
                 pass_filter[sv_id]["End"].append(end)
                 pass_filter[sv_id]["Start_b"].append(start2)
